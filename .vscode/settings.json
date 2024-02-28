@@ -1,0 +1,74 @@
+{
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": true,
+    "eslint.validate": ["html", "javascript", "typescript"],
+    "window.zoomLevel": 0.3,
+    "editor.detectIndentation": false,
+    "editor.comments.insertSpace": true,
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "editor.formatOnSave": true,
+    // "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.fontFamily": "Cascadia Code PL, Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 17,
+    "editor.rulers": [110, 110],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 105,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "html.format.enable": false,
+    "html.format.indentHandlebars": true,
+    "html.format.preserveNewLines": true,
+    "html.format.indentInnerHtml": true,
+    "emmet.triggerExpansionOnTab": true,
+    "workbench.sideBar.location": "left",
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorCustomizations": {
+        "editorRuler.foreground": "#6b3a85"
+    },
+    "prettier.semi": true,
+    "prettier.singleQuote": false,
+    "prettier.bracketSameLine": true,
+    "prettier.trailingComma": "none",
+    "prettier.tabWidth": 4,
+    "prettier.bracketSpacing": true,
+    "prettier.printWidth": 105,
+    "prettier.htmlWhitespaceSensitivity": "ignore",
+    "json.format.enable": true,
+    "json.schemaDownload.enable": false,
+    "js/ts.implicitProjectConfig.experimentalDecorators": true,
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/.ignored_node_modules": true,
+        "**/logs": true,
+        "**/dist": true,
+        "**/doc": true
+    },
+    "files.eol": "\n",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        },
+        "**/node_modules": true,
+        "**/.ignored_node_modules": true,
+        "**/logs": true,
+        "**/dist": true,
+        "**/doc": true,
+        "**/public": true
+    },
+    "remote.SSH.showLoginTerminal": true,
+    "files.associations": {
+        ".prettierrc": "jsonc",
+        "tsconfig.json": "jsonc"
+    }
+}

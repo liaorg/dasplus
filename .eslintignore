@@ -1,0 +1,11 @@
+.git/
+.vscode/
+build/
+config/
+dist/
+node_modules/
+data/
+logs/
+vendor/
+bak/
+.ignored_node_modules/
