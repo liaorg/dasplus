@@ -5,6 +5,24 @@
     "compilerOptions": {
         "deleteOutDir": true,
         "tsConfigPath": "tsconfig.build.json",
-        "typeCheck": true
+        "builder": "swc",
+        "typeCheck": true,
+        "assets": [
+            { "include": "i18n/**/*", "watchAssets": true },
+            { "include": "config/**/*", "watchAssets": false },
+            { "include": "fonts/**/*", "watchAssets": false },
+            { "include": "oem/**/*", "watchAssets": false }
+        ],
+        "plugins": [
+            {
+                "name": "@nestjs/swagger",
+                "options": {
+                    "dtoFileNameSuffix": [".dto.ts"],
+                    "classValidatorShim": false,
+                    "introspectComments": true,
+                    "controllerKeyOfComment": "summary"
+                }
+            }
+        ]
     }
 }

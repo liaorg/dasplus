@@ -4,6 +4,11 @@ import { registerAs } from '@nestjs/config';
  * 应用配置
  */
 export const appConfig = registerAs('appConfig', () => ({
+    // 日志
+    logger: {
+        level: 'debug',
+        maxFiles: 30,
+    },
     // 默认显示时的时区
     // 写入时建议不设置时区，即保持UTC0时区，时间统一在应用读取时转换
     timezone: 'Asia/Shanghai',

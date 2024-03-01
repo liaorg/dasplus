@@ -12,7 +12,7 @@ https://nest.nodejs.cn/ \
 |   +-- i18n // 国际化语言文件
 |   +-- init // 系统初始化操作
 |   +-- common // 公共全局模块
-|   |   +-- constants // 静态变量
+|   |   +-- constants // 静态变量 常量
 |   |   +-- decorators // 装饰器
 |   |   +-- dto // DTO (Data Transfer Object) Schema, Validation
 |   |   +-- enums // 枚举变量
@@ -20,7 +20,7 @@ https://nest.nodejs.cn/ \
 |   |   +-- filters // 异常过滤器
 |   |   +-- guards // 守卫
 |   |   +-- interceptors // 拦截器
-|   |   +-- interfaces // 接口
+|   |   +-- interfaces // 公共类型接口
 |   |   +-- middleware // 中间件
 |   |   +-- pipes // 管道
 |   |   +-- providers // 服务

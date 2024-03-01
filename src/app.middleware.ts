@@ -6,6 +6,7 @@ import rateLimit, { errorResponseBuilderContext } from '@fastify/rate-limit';
 import { HttpException } from '@nestjs/common';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { contentParser } from 'fastify-multer';
+import { isDev } from './config';
 
 // 函数式中间件
 // 没有成员，没有额外的方法，没有依赖关系
@@ -27,6 +28,8 @@ export async function appMiddleware(app: NestFastifyApplication): Promise<NestFa
         preflightContinue: false,
         optionsSuccessStatus: 204,
     });
+    // Starts listening for shutdown hooks
+    !isDev && app.enableShutdownHooks();
 
     // 限速 pnpm add @fastify/rate-limit
     // https://github.com/fastify/fastify-rate-limit
