@@ -18,7 +18,10 @@ async function bootstrap() {
     // 引入全局中间件
     await appMiddleware(app);
 
-    if (isDev) app.useGlobalInterceptors(new LoggingInterceptor());
+    if (isDev) {
+        // 开发模式时记录日志
+        app.useGlobalInterceptors(new LoggingInterceptor());
+    }
 
     // 接口文档
     if (isDev) {

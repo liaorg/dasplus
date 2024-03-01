@@ -1,4 +1,24 @@
 import { registerAs } from '@nestjs/config';
+import { join, resolve } from 'node:path';
+
+const resolveDir = (dir: string) => join(resolve(__dirname, '../../'), dir);
+
+// 根路径
+export const ROOT_PATH = resolveDir('');
+// 数据库路径
+export const DATA_PATH = `${ROOT_PATH}/data`;
+// export const DATA_PATH = '/mnt/e/wsl/data';
+// 脚本路径
+export const BIN_PATH = `${ROOT_PATH}/bin`;
+// 配置文件路径
+export const CONF_PATH = `${ROOT_PATH}/conf`;
+
+// temp路径
+export const TEMP_PATH = `${ROOT_PATH}/tmp`;
+// export const TEMP_PATH = '/tmp';
+
+// 文件上传路径
+export const UPLOAD_PATH = `${ROOT_PATH}/upload`;
 
 /**
  * 应用配置

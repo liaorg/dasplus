@@ -10,7 +10,7 @@
         "assets": [
             { "include": "i18n/**/*", "watchAssets": true },
             { "include": "config/**/*", "watchAssets": false },
-            { "include": "fonts/**/*", "watchAssets": false },
+            { "include": "fonts/**/*", "watchAssets": true },
             { "include": "oem/**/*", "watchAssets": false }
         ],
         "plugins": [

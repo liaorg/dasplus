@@ -1,35 +1,37 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  Logger,
-  NestInterceptor,
-} from '@nestjs/common'
-import { Observable, tap } from 'rxjs'
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private logger = new Logger(LoggingInterceptor.name, { timestamp: false })
+    private logger = new Logger(LoggingInterceptor.name, { timestamp: false });
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Observable<any> {
-    const call$ = next.handle()
-    const request = context.switchToHttp().getRequest()
-    const content = `${request.method} -> ${request.url}`
-    const isSse = request.headers.accept === 'text/event-stream'
-    this.logger.debug(`+++ 请求：${content}`)
-    const now = Date.now()
+    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
+        const call$ = next.handle();
+        const ctx = context.switchToHttp();
+        const request = ctx.getRequest<FastifyRequest>();
+        const response = ctx.getResponse<FastifyReply>();
+        const isSse = request.headers.accept === 'text/event-stream';
+        // 组装日志信息
+        const url = request.originalUrl ?? request.url;
+        let requestContent = `${request.ip} >>> ${request.method} ${url}`;
+        requestContent += Object.keys(request.params ?? {}).length
+            ? `\t Parmas: ${JSON.stringify(request.params)}`
+            : '';
+        requestContent += Object.keys(request.body ?? {}).length
+            ? `\t Body: ${JSON.stringify(request.body)}`
+            : '';
+        requestContent += request['user'] ? `\t LoginUser: ${JSON.stringify(request['user'])}` : '';
+        this.logger.debug(`+++ Request: ${requestContent}`);
+        const now = Date.now();
+        return call$.pipe(
+            tap((data) => {
+                if (isSse) return;
 
-    return call$.pipe(
-      tap(() => {
-        if (isSse)
-          return
-
-        this.logger.debug(`--- 响应：${content}${` +${Date.now() - now}ms`}`)
-      },
-      ),
-    )
-  }
+                const dataContent = JSON.stringify(data);
+                const logFormat = `${response.statusCode} ${dataContent?.slice(0, 500)} ......`;
+                this.logger.debug(`--- Response: ${logFormat} ${` +${Date.now() - now}ms`}`);
+            }),
+        );
+    }
 }

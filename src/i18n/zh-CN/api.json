@@ -1,3 +1,20 @@
 {
-    "hello": "nestjs"
+    "hello": "nestjs",
+    "error": {
+        "requestTimeout": "请求超时",
+        "requestSuccess": "请求成功",
+        "unknowError": "未知错误",
+        "badParams": "错误的请求参数",
+        "serverError": "服务器错误",
+        "fileNotExisted": "文件不存在 {file}",
+        "createFileFailed": "创建文件失败",
+        "downloadFileFailed": "下载文件失败",
+        "writeFileFailed": "写入文件失败",
+        "copyFileFailed": "复制文件失败",
+        "noData": "暂无数据",
+        "encryptError": "错误的请求参数",
+        "signError": "错误的请求参数",
+        "objectIdError": "错误的 id 参数",
+        "weakPassword": "检测到当前密码容易被攻击，请重新设置"
+    }
 }
