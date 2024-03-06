@@ -1,7 +1,7 @@
 /**
  * 成功/失败
  */
-export class OpenApiResponseDto {
+export class OpenApiResponseDto<T = any> {
     /**
      * HTTP 状态码 200 为成功，其他值为失败
      */
@@ -37,5 +37,5 @@ export class OpenApiResponseDto {
     /**
      * 请求返回数据
      */
-    data?: any;
+    data?: T;
 }

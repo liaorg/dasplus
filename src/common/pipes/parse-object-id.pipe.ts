@@ -1,7 +1,7 @@
-import { PipeTransform, Injectable } from '@nestjs/common';
-import { ApiError } from '../constants';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { isObjectIdOrHexString } from 'mongoose';
-import { MongooseException } from '../exceptions/mongoose.exception';
+import { ApiError } from '../constants';
+import { MongodbException } from '../exceptions/mongodb.exception';
 
 // 验证请求参数管道
 // 使用 @Injectable() 装饰器注解的类
@@ -39,7 +39,7 @@ export class ParseObjectIdPipe implements PipeTransform {
             const error = {
                 ...ApiError.objectIdError,
             };
-            throw new MongooseException(error, { value });
+            throw new MongodbException(error, { value });
         }
         return value;
     }

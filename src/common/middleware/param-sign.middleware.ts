@@ -10,7 +10,7 @@ import { Logger } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { md5 } from 'hash-wasm';
 import { ApiError } from '../constants';
-import { fastifySend } from './helps';
+import { nodeHttpSend } from '../helps';
 
 // 函数式中间件
 // 没有成员，没有额外的方法，没有依赖关系
@@ -37,7 +37,7 @@ export async function paramSignMiddleware(
                 errorCode: ApiError.signError.errorCode,
                 message: ApiError.signError.langKeyword,
             };
-            fastifySend(req, res, sendData);
+            nodeHttpSend(req, res, sendData);
             return;
         }
         next();
@@ -50,6 +50,6 @@ export async function paramSignMiddleware(
             errorCode: ApiError.signError.errorCode,
             message: ApiError.signError.langKeyword,
         };
-        fastifySend(req, res, sendData);
+        nodeHttpSend(req, res, sendData);
     }
 }

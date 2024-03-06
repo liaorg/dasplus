@@ -13,6 +13,7 @@ import { decryptDataMiddleware, paramSignMiddleware } from './common/middleware'
 import { RequestValidationSchemaPipe } from './common/pipes';
 import { appConfig, isDev, mongodbConfig } from './config';
 import { SharedModule } from './shared/shared.module';
+import { AuthModule } from './modules/core/auth/auth.module';
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { SharedModule } from './shared/shared.module';
             resolvers: [new HeaderResolver(['x-das-lang']), AcceptLanguageResolver],
         }),
         SharedModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [

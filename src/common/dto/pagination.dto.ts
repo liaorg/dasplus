@@ -1,20 +1,18 @@
 import { SortOrder } from 'mongoose';
-import { RequestValidationSchema } from '../decorators';
 import { AnyObject } from '../interfaces';
-import { paginationSchema } from '../schemas';
 
 export type SortType<T> = {
     [key in keyof T]: SortOrder;
 };
 
 // 分页查询参数验证
-@RequestValidationSchema({
-    type: 'object',
-    properties: {
-        // 分页
-        ...paginationSchema,
-    },
-})
+// @RequestValidationSchema({
+//     type: 'object',
+//     properties: {
+//         // 分页
+//         ...paginationSchema,
+//     },
+// })
 export class PaginationDto<T = AnyObject> {
     /**
      * 当前的页数

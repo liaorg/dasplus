@@ -146,19 +146,32 @@ git config --global user.email useremail@163.com
 
 ## 提交规范
 
-git commit -m "type: subject"
+git commit -m "<type>(<scope>): <subject>"
 
 1、type (必须)
+
+````
 用于说明 git commit 的类别，只允许使用下面的标识
 feat: 新功能（feature）
 fix: 修复 bug
 docs: 文档（documentation）
-style: 格式（不影响代码运行的变动）
-refactor: 重构（既不是新增功能，也不是修改 bug 的代码变动）
+style: 优化项目结构或者代码格式（不影响代码运行的变动）
+refactor: 重构（既不是新增功能，也不是修改 bug 的代码变动. 不应该影响原有功能, 包括对外暴露的接口）
 test: 增加测试
-chore: 构建过程或辅助工具的变动
-revert: 回滚到上一个版本
+chore: 构建过程, 辅助工具升级. 如升级依赖, 升级构建工具
+perf: 性能优化
+revert: 回滚之前的commit \
+ git revert 命令用于撤销之前的一个提交, 并在为这个撤销操作生成一个提交
+build或release: 构建或发布版本
+ci: 持续集成
+types: 类型定义文件更改
+workflow: 工作流改进
+wip: 开发中
+safe: 修复安全问题
 merge: 代码合并
+```
+2. scope: 可选. 说明提交影响的范围. 例如样式, 后端接口, 逻辑层等等
+3. Subject: 提交目的的简短描述, 动词开头, 不超过80个字符. 不要为了提交而提交
 
 build, ci, perf
 
@@ -171,35 +184,42 @@ git push
 
 ## i18n
 
-```
+````
+
 # [https://github.com/toonvanstrijp/nestjs-i18n]
+
 https://github.com/toonvanstrijp/nestjs-i18n/tree/main/docs \
 npm install --save nestjs-i18n
+
 # nest-cli.json
+
 {
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "assets": [
-      { "include": "i18n/**/*", "watchAssets": true }
-    ]
-  }
+"collection": "@nestjs/schematics",
+"sourceRoot": "src",
+"compilerOptions": {
+"assets": [
+{ "include": "i18n/**/*", "watchAssets": true }
+]
 }
+}
+
 # app.module.ts
+
 @Module({
-  imports: [
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      },
-    }),
-  ],
-  controllers: [],
+imports: [
+I18nModule.forRoot({
+fallbackLanguage: 'en',
+loaderOptions: {
+path: path.join(__dirname, '/i18n/'),
+watch: true,
+},
+}),
+],
+controllers: [],
 })
 
 # users.service.ts / users.controller.ts
+
 constructor(private readonly i18nService: I18nService) {}
 
 ```
@@ -207,18 +227,20 @@ constructor(private readonly i18nService: I18nService) {}
 ## 静态服务 [https://docs.nestjs.com/recipes/serve-static]
 
 ```
+
 npm install --save @nestjs/serve-static
-```
+
+````
 
 ## curd
 
-```
+```sh
 npm install mongodb --save
 npm install @nestjsx/crud class-transformer class-validator
 npm install @nestjs/typeorm typeorm --save
 or
 npm install --save @nestjs/mongoose mongoose
-```
+````
 
 ## 模块开发流程
 

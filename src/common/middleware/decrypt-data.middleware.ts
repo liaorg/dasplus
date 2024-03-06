@@ -12,8 +12,8 @@
 import { appConfig } from '@/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ApiError } from '../constants';
+import { nodeHttpSend } from '../helps';
 import { sm2Decrypt } from '../utils';
-import { fastifySend } from './helps';
 
 // 函数式中间件
 // 没有成员，没有额外的方法，没有依赖关系
@@ -36,6 +36,6 @@ export async function decryptDataMiddleware(
             errorCode: ApiError.encryptError.errorCode,
             message: ApiError.encryptError.langKeyword,
         };
-        fastifySend(req, res, sendData);
+        nodeHttpSend(req, res, sendData);
     }
 }

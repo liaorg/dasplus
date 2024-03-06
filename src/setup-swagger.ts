@@ -6,25 +6,41 @@
 import { Logger } from '@nestjs/common';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import { API_SECURITY_AUTH } from './common/decorators';
 
 // 函数式中间件
 // 没有成员，没有额外的方法，没有依赖关系
 export function setupSwagger(app: NestFastifyApplication): NestFastifyApplication {
     // 配置 Swagge
-    const swaggeConfig = new DocumentBuilder()
-        // 开启 BearerAuth 授权认证
-        .addBearerAuth()
-        .setTitle('管理后台')
-        // .setDescription('管理后台接口')
-        .setVersion('v1.0')
-        .build();
-    const options: SwaggerDocumentOptions = {
-        operationIdFactory: (_controllerKey: string, methodKey: string) => methodKey,
-    };
-    const prefix = 'api-docs';
     try {
-        const swaggeDocument = SwaggerModule.createDocument(app, swaggeConfig, options);
-        SwaggerModule.setup(prefix, app, swaggeDocument);
+        const documentBuilder = new DocumentBuilder()
+            .setTitle('管理后台')
+            // .setDescription('管理后台接口')
+            .setVersion('v1.0');
+
+        // auth security
+        documentBuilder.addSecurity(API_SECURITY_AUTH, {
+            description: '输入令牌（Enter the token）',
+            type: 'http',
+            in: 'header',
+            name: 'Authorization',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+        });
+
+        const options: SwaggerDocumentOptions = {
+            operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+            ignoreGlobalPrefix: false,
+            extraModels: [],
+        };
+        const document = SwaggerModule.createDocument(app, documentBuilder.build(), options);
+        const prefix = 'api-docs';
+        SwaggerModule.setup(prefix, app, document, {
+            swaggerOptions: {
+                // 保持登录
+                persistAuthorization: true,
+            },
+        });
     } catch (error) {
         Logger.error('swagge', error);
     }
