@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { ClientRequest, ServerResponse } from 'node:http';
 import { OpenApiResponseDto } from './dto';
 
 /**
@@ -8,8 +8,8 @@ import { OpenApiResponseDto } from './dto';
  * @param sendData
  */
 export function nodeHttpSend(
-    req: FastifyRequest['raw'],
-    res: FastifyReply['raw'],
+    req: ClientRequest,
+    res: ServerResponse,
     sendData: { statusCode: number; errorCode: number; message: string },
 ) {
     const { statusCode, errorCode, message } = sendData;
@@ -19,10 +19,18 @@ export function nodeHttpSend(
         statusCode,
         errorCode,
         method: req.method,
-        path: req.url,
+        path: (req as any).originalUrl,
         date: date,
         message,
     };
     res.write(JSON.stringify(data));
     res.end();
+}
+
+/**
+ * 生成 auth token key
+ *
+ */
+export function genAuthTokenKey(val: string | number) {
+    return `auth:token:${String(val)}` as const;
 }

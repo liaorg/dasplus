@@ -2,12 +2,12 @@
 https://docs.nestjs.com/guards#guards
 */
 
+import { AdapterRequest } from '@/common/adapters';
 import { REQUEST_SCHEMA_VALIDATION } from '@/common/constants';
 import { ajvValidate } from '@/common/utils';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { SchemaObject } from 'ajv';
-import { FastifyRequest } from 'fastify';
 import { I18nValidationException } from 'nestjs-i18n';
 import { AuthStrategy } from '../constants';
 import { LoginDto } from '../dto/login.dto';
@@ -28,7 +28,7 @@ export class LocalAuthGuard extends AuthGuard(AuthStrategy.LOCAL) {
     }
 
     // 验证请求
-    async validateRequest(request: FastifyRequest, context: ExecutionContext): Promise<boolean> {
+    async validateRequest(request: AdapterRequest, context: ExecutionContext): Promise<boolean> {
         const schema: SchemaObject = Reflect.getMetadata(REQUEST_SCHEMA_VALIDATION, LoginDto) || {};
         // 验证请求参数
         const errors = ajvValidate(schema, request.body);

@@ -1,4 +1,3 @@
-import { ObjectIdType } from '@/common/interfaces';
 import { RoleGroupTypeEnum } from '../../role-group/enums';
 
 /**
@@ -11,19 +10,19 @@ export class RequestUserDto {
     /**
      * 登录用户id
      */
-    _id: ObjectIdType;
+    _id: string;
     /**
      * 登录名
      */
-    name: string;
+    name?: string;
     /**
      * 角色id
      */
-    roleId?: ObjectIdType;
+    roleId?: string;
     /**
      * 角色组id
      */
-    roleGroupId?: ObjectIdType;
+    roleGroupId?: string;
     /**
      * 角色组类型
      */
@@ -39,7 +38,7 @@ export class RequestUserDto {
     /**
      * 权限值
      */
-    permissionIds?: ObjectIdType[];
+    permissionIds?: string[];
     /**
      * 业务系统，json 字符串{id:[],name:[]}，id:[-1] 时为全部
      * 业务系统，json.id

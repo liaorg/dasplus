@@ -1,13 +1,16 @@
 import { ApiResult } from '@/common/decorators';
-import { Body, Controller, Headers, Ip, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { Controller, Headers, Ip, Post, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { PublicDecorator } from './decorators';
+import { PublicDecorator, RequestUserDecorator } from './decorators';
+import { RequestUserDto } from './dto';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards';
 
-@PublicDecorator()
+@ApiTags('Auth')
+// @ApiHeader(OpenApiHeaderConfigure)
 @UseGuards(LocalAuthGuard)
+@PublicDecorator()
 @Controller('auth')
 export class AuthController {
     constructor(private readonly service: AuthService) {}
@@ -18,15 +21,19 @@ export class AuthController {
      * @returns string
      */
     @ApiOperation({ summary: '登录' })
+    @ApiBody({ type: LoginDto })
     @ApiResult({ status: 200, type: Object })
-    @PublicDecorator()
     @Post('login')
-    @UseGuards(LocalAuthGuard)
-    async login(@Body() loginUser: LoginDto, @Ip() ip: string, @Headers('user-agent') ua: string) {
-        // 登录安全验证：验证码 双因子等
+    async login(
+        @RequestUserDecorator() loginUser: RequestUserDto,
+        @Headers() headers: any,
+        @Ip() ip: string,
+    ) {
         // 登录
-        const token = await this.service.login(loginUser.username, loginUser.password, ip, ua);
-        return { token };
+        console.log('user::: ', loginUser);
+        const ua = headers['user-agent'];
+        const token = await this.service.login(loginUser, ip, ua);
+        return { token, ua };
         // 生成 token
         // const token = await this.service.createToken(user, ip);
         // // 获取用户信息

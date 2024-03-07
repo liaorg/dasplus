@@ -1,5 +1,3 @@
-import { ObjectIdType } from '@/common/interfaces';
-
 /**
  * 角色组名下拉列表
  */
@@ -7,7 +5,7 @@ export class RoleGroupListDto {
     /**
      * 角色组id
      */
-    _id: ObjectIdType;
+    _id: string;
     /**
      * 角色类
      */

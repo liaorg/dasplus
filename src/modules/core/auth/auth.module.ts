@@ -8,8 +8,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessToken, AccessTokenSchema, RefreshToken, RefreshTokenSchema } from './schemas';
 import { TokenService } from './services';
+import { JwtStrategy, LocalStrategy } from './strategies';
 
 const providers = [AuthService, TokenService];
+const strategies = [LocalStrategy, JwtStrategy];
 
 @Module({
     imports: [
@@ -17,7 +19,7 @@ const providers = [AuthService, TokenService];
             { name: AccessToken.name, useFactory: () => AccessTokenSchema },
             { name: RefreshToken.name, useFactory: () => RefreshTokenSchema },
         ]),
-        PassportModule.register({ defaultStrategy: 'jwt' }),
+        PassportModule,
         JwtModule.registerAsync({
             useFactory: (configService: ConfigService) => {
                 const { secret, tokenExpired } = configService.get('appConfig.jwt');
@@ -25,6 +27,7 @@ const providers = [AuthService, TokenService];
                     global: true,
                     secret,
                     signOptions: {
+                        // algorithm: 'HS512',
                         expiresIn: `${tokenExpired}s`, // 有效时长
                     },
                     ignoreExpiration: isDev,
@@ -34,7 +37,7 @@ const providers = [AuthService, TokenService];
         }),
     ],
     controllers: [AuthController],
-    providers: [...providers],
+    providers: [...providers, ...strategies],
     exports: [JwtModule, ...providers],
 })
 export class AuthModule {}

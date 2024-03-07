@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 /**
  * 成功/失败
  */
@@ -37,5 +39,6 @@ export class OpenApiResponseDto<T = any> {
     /**
      * 请求返回数据
      */
+    @ApiProperty({ type: 'object' })
     data?: T;
 }

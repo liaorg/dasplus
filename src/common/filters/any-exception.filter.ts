@@ -8,8 +8,8 @@ import {
     HttpStatus,
     Logger,
 } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { I18nContext, I18nValidationError, I18nValidationException } from 'nestjs-i18n';
+import { AdapterRequest, AdapterResponse } from '../adapters';
 import { ApiError } from '../constants';
 import { OpenApiResponseDto } from '../dto';
 import { ApiException } from '../exceptions';
@@ -35,8 +35,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
     // 每个异常过滤器必须实现一个 catch 函数
     catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
-        const response = ctx.getResponse<FastifyReply>();
-        const request = ctx.getRequest<FastifyRequest>();
+        const response = ctx.getResponse<AdapterResponse>();
+        const request = ctx.getRequest<AdapterRequest>();
         const status =
             exception instanceof HttpException
                 ? exception.getStatus()
@@ -59,11 +59,8 @@ export class AnyExceptionFilter implements ExceptionFilter {
         let message = ApiError.unknowError.langKeyword;
 
         let logFormat = `${requestContent} \t Response: ${status}`;
-        if (typeof exception.stack === 'function') {
-            logFormat += ` ${exception.stack()}`;
-        } else {
-            logFormat += ` ${exception.stack}`;
-        }
+        const stackInfo = typeof exception.stack === 'function' ? exception.stack() : exception.stack;
+        logFormat += isDev ? ` ${stackInfo}` : '';
 
         let uploadMessage = '';
         // 自定义返回信息
@@ -107,11 +104,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
 
         // 根据状态码，进行日志类型区分
         if (status >= 500 && !(exception instanceof ApiException)) {
-            Logger.error(
-                exception,
-                isDev ? exception.stack : undefined,
-                `${AnyExceptionFilter.name} Catch`,
-            );
+            Logger.error(exception, isDev ? stackInfo : undefined, `${AnyExceptionFilter.name} Catch`);
         } else if (status === 404) {
             message = '';
             this.logger.warn(
@@ -128,7 +121,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
             statusCode: status,
             errorCode: errorCode,
             method: request.method,
-            path: request.url,
+            path: url,
             date: date,
             message: message,
         };
@@ -141,7 +134,6 @@ export class AnyExceptionFilter implements ExceptionFilter {
             // 只显示响应配置的具体错误信息
             data.detailMessage = detailMessage?.rep?.err_msg;
         }
-        // console.log('response::: ', response);
         response.status(status).send(data);
     }
 

@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import { createReadStream, createWriteStream, read, Stats } from 'node:fs';
 import { access, constants, mkdir, readdir, rename, rm, stat, unlink } from 'node:fs/promises';
 import os from 'node:os';
@@ -9,6 +8,7 @@ import lineReader from 'line-reader';
 import { nanoid } from 'nanoid/async';
 import { I18nContext } from 'nestjs-i18n';
 import { FileHandle, open, readFile as readFileAsync } from 'node:fs/promises';
+import { ServerResponse } from 'node:http';
 import { pipeline } from 'node:stream/promises';
 import { promisify } from 'node:util';
 import { ApiError } from '../constants';
@@ -63,7 +63,7 @@ function getStartPos(range = '') {
  */
 const downloadFile = async (param: {
     path: string;
-    res: Response;
+    res: ServerResponse;
     isRemoveFile?: boolean;
     isRemoveDir?: boolean;
 }) => {
@@ -83,7 +83,7 @@ const downloadFile = async (param: {
     }
     try {
         // 读取文件流
-        const range = res.get('range');
+        const range = res.getHeader('range') as string;
         const start = getStartPos(range);
         const stream = createReadStream(path, {
             start,

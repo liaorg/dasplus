@@ -5,14 +5,19 @@
     "compilerOptions": {
         "deleteOutDir": true,
         "tsConfigPath": "tsconfig.build.json",
-        "builder": "swc",
-        "typeCheck": true,
+        "swcbuilder": {
+            "builder": "swc",
+            "typeCheck": true
+        },
         "assets": [
             { "include": "i18n/**/*", "watchAssets": true },
             { "include": "config/**/*", "watchAssets": false },
             { "include": "fonts/**/*", "watchAssets": true },
             { "include": "oem/**/*", "watchAssets": false }
         ],
+        "watchAssets": {
+            "exclude": ["metadata.ts"]
+        },
         "plugins": [
             {
                 "name": "@nestjs/swagger",
@@ -24,5 +29,9 @@
                 }
             }
         ]
+    },
+    "generateOptions": {
+        "spec": false,
+        "flat": true
     }
 }

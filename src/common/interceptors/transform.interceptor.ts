@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { Observable, map } from 'rxjs';
+import { AdapterRequest, AdapterResponse } from '../adapters';
 
 // 响应映射，规范响应输出
 
@@ -10,17 +10,18 @@ export class TransformInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         // 获取请求体
         const ctx = context.switchToHttp();
-        const response = ctx.getResponse<FastifyReply>();
-        const request = ctx.getRequest<FastifyRequest>();
+        const response = ctx.getResponse<AdapterResponse>();
+        const request = ctx.getRequest<AdapterRequest>();
         return next.handle().pipe(
             map((data) => {
+                const url = request.originalUrl ?? request.url;
                 const date = new Date().toLocaleString();
                 const responseData = {
                     statusCode: data?.statusCode ?? response.statusCode,
                     errorCode: 0,
                     method: request.method,
-                    path: request.url,
-                    date: date,
+                    path: url,
+                    date,
                     message: 'success',
                     data: undefined,
                 };

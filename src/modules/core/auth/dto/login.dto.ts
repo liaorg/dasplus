@@ -8,15 +8,15 @@ export class LoginDto {
      * 用户名
      * @example xciovpmn
      */
-    username?: string;
+    username: string;
     /**
      * 密码
-     * @example
+     * @example 55e12e91650d2fec56ec74e1d3e4ddbfce2ef3a65890c2a19ecf88a307e76a23
      */
-    password?: string;
+    password: string;
     /**
      * 时间戳
-     * @example
+     * @example 1709777381
      */
     nonce?: number;
     /**

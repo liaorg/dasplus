@@ -1,13 +1,15 @@
 /*
 https://docs.nestjs.com/guards#guards
 */
+import { AdapterRequest } from '@/common/adapters';
 import { isEmpty } from '@/common/utils';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ExtractJwt } from 'passport-jwt';
 import { AuthException } from '../auth.exception';
-import { AuthError, IS_PUBLIC_KEY } from '../constants';
+import { AuthService } from '../auth.service';
+import { AuthError, AuthStrategy, IS_PUBLIC_KEY } from '../constants';
 import { TokenService } from '../services';
 
 /**
@@ -19,10 +21,11 @@ import { TokenService } from '../services';
  * @extends {AuthGuard('jwt')}
  */
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
     constructor(
         private reflector: Reflector,
         private readonly tokenService: TokenService,
+        private authService: AuthService,
         // private readonly systemConfigureService: SystemConfigureService,
     ) {
         super();
@@ -40,10 +43,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             context.getHandler(),
             context.getClass(),
         ]);
-        if (isPublic) return true;
         // 从请求头中获取token
         // 如果请求头不含有authorization字段则认证失败
-        const request = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest<AdapterRequest>();
+
+        // sse 服务判断
+        const isSse = request?.headers?.accept === 'text/event-stream';
+        if (isSse && !request?.headers?.authorization?.startsWith('Bearer')) {
+            const { token } = request?.query as Record<string, string>;
+            if (token) request.headers.authorization = `Bearer ${token}`;
+        }
+
+        // 需要后置判断 这样携带了 token 的用户就能够解析到 request.user
+        if (isPublic) return true;
+
         const requestToken = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
         if (!requestToken) {
             const error = {
@@ -52,8 +65,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             };
             throw new AuthException(error);
         }
-        // 判断token是否存在,如果不存在则认证失败
         const accessToken = await this.tokenService.checkAccessToken(requestToken);
+        // 判断 token 是否存在, 如果不存在则认证失败
         if (isEmpty(accessToken)) {
             const error = {
                 statusCode: 401,
@@ -61,36 +74,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             };
             throw new AuthException(error);
         }
-        // 获取登录安全配置
-        // const loginSafety = await this.systemConfigureService.getLoginSafety();
-        const loginSafety = {
-            timeOfLogout: 30,
-        };
-        // 无操作自动注销时间/分钟 => 转换成毫秒
-        const logoutTime = loginSafety.timeOfLogout * 60 * 1000;
-        // 创建时间 + 超时时间 < 当前时间为过期
-        if (accessToken.create_date + logoutTime < Date.now()) {
-            const error = {
-                statusCode: 401,
-                ...AuthError.tokenExpired,
-            };
-            throw new AuthException(error, { loginSafety, accessToken, date: Date.now() });
-        }
+
+        let result: any = false;
         try {
-            // 检测token是否为损坏或过期的无效状态,如果无效则尝试刷新token
-            return (await super.canActivate(context)) as boolean;
+            result = await super.canActivate(context);
         } catch (e) {
-            // 尝试通过refreshToken刷新token
-            // 刷新成功则给请求头更换新的token
-            // 并给响应头添加新的token和refreshtoken
-            const response = context.switchToHttp().getResponse();
-            const refreshToken = await this.tokenService.refreshToken(accessToken, response);
-            if (!refreshToken) return false;
-            if (refreshToken.accessToken) {
-                request.headers.authorization = `Bearer ${refreshToken.accessToken.value}`;
-            }
-            // 刷新失败则再次抛出认证失败的异常
-            return super.canActivate(context) as boolean;
+            // 需要后置判断 ?? 这样携带了 token 的用户就能够解析到 request.user ??
         }
+        const userId = request?.user?._id;
+        // SSE 请求
+        if (isSse) {
+            const { uid } = request?.params as Record<string, any>;
+            if (uid !== userId) {
+                const error = {
+                    statusCode: 401,
+                    ...AuthError.unauthorized,
+                };
+                throw new AuthException(error);
+            }
+        }
+        // 不允许多端登录
+        // const cacheToken = await this.authService.getTokenByUid(userId);
+        // if (requestToken !== cacheToken) {
+        //   // 与缓存保存不一致 即二次登录
+        //   throw new ApiException(ErrorEnum.CODE_1106);
+        // }
+        return result;
     }
 }

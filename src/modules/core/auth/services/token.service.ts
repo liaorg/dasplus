@@ -1,3 +1,4 @@
+import { AdapterResponse } from '@/common/adapters';
 import { ObjectIdType } from '@/common/interfaces';
 import { MongoDbService } from '@/common/services';
 import { getUTCTime, isEmpty, toObjectId } from '@/common/utils';
@@ -6,10 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Dayjs } from 'dayjs';
-import { FastifyReply } from 'fastify';
 import { ClientSession, FlattenMaps, Model } from 'mongoose';
 import { nanoid } from 'nanoid/async';
-import { TokenPayloadDto } from '../dto';
+import { RequestUserDto, TokenPayloadDto } from '../dto';
 import { AccessToken, AccessTokenDocument, RefreshToken } from '../schemas';
 
 /**
@@ -37,7 +37,7 @@ export class TokenService {
      */
     async refreshToken(
         accessToken: FlattenMaps<AccessToken> & { _id: ObjectIdType },
-        response: FastifyReply,
+        response: AdapterResponse,
     ) {
         const { user, _id, role, login_ip } = accessToken;
         const refreshToken = await this.getRefreshTokenByAccessToken(_id);
@@ -46,11 +46,8 @@ export class TokenService {
             // 判断 refreshToken 是否过期
             if (now.isAfter(refreshToken.expiredAt)) return null;
             // 如果没过期则生成新的 accessToken 和 refreshToken
-            const token = await this.generateAccessToken(
-                user as ObjectIdType,
-                role as ObjectIdType,
-                login_ip,
-            );
+            const loginUser: RequestUserDto = { _id: user.toString(), roleId: role.toString() };
+            const token = await this.generateAccessToken(loginUser, login_ip);
             // 删除旧的 token
             await this.accessTokenService.deleteOne({ filter: { _id } });
             response.header('token', token.accessToken.value);
@@ -62,18 +59,19 @@ export class TokenService {
      * 根据荷载签出新的AccessToken并存入数据库
      * 且自动生成新的Refresh也存入数据库
      *
-     * @param userId
-     * @param roleId
+     * @param loginUser
+     * @param ip
      * @returns
      * @memberof TokenService
      */
-    async generateAccessToken(userId: ObjectIdType, roleId: ObjectIdType, ip?: string) {
+    async generateAccessToken(loginUser: RequestUserDto, ip: string) {
+        const { _id: userId, roleId } = loginUser;
         // 获取登录安全配置
         const now = getUTCTime();
         const accessTokenPayload: TokenPayloadDto = {
-            sub: userId.toString(),
-            iat: now.unix(),
             $id: await nanoid(),
+            sub: userId,
+            iat: now.unix(),
         };
         const { secret, tokenExpired } = this.configService.get('appConfig.jwt');
         const signed = await this.jwtService.signAsync(accessTokenPayload, { secret });
@@ -100,9 +98,8 @@ export class TokenService {
      */
     async generateRefreshToken(accessToken: AccessTokenDocument, now: Dayjs): Promise<RefreshToken> {
         const refreshTokenPayload: TokenPayloadDto = {
-            sub: await nanoid(),
-            iat: now.unix(),
             $id: await nanoid(),
+            iat: now.unix(),
         };
         const { secret, refreshTokenExpired } = this.configService.get('appConfig.jwt');
         const signed = await this.jwtService.signAsync(refreshTokenPayload, { secret });

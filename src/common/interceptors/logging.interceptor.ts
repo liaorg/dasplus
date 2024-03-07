@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { Observable, tap } from 'rxjs';
+import { AdapterRequest, AdapterResponse } from '../adapters';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -9,8 +9,8 @@ export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
         const call$ = next.handle();
         const ctx = context.switchToHttp();
-        const request = ctx.getRequest<FastifyRequest>();
-        const response = ctx.getResponse<FastifyReply>();
+        const request = ctx.getRequest<AdapterRequest>();
+        const response = ctx.getResponse<AdapterResponse>();
         const isSse = request.headers.accept === 'text/event-stream';
         // 组装日志信息
         const url = request.originalUrl ?? request.url;

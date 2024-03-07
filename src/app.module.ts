@@ -1,6 +1,7 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { AcceptLanguageResolver, HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { join } from 'path';
 import { AppController } from './app.controller';
@@ -12,8 +13,9 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { decryptDataMiddleware, paramSignMiddleware } from './common/middleware';
 import { RequestValidationSchemaPipe } from './common/pipes';
 import { appConfig, isDev, mongodbConfig } from './config';
-import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './modules/core/auth/auth.module';
+import { JwtAuthGuard } from './modules/core/auth/guards';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
     imports: [
@@ -25,6 +27,8 @@ import { AuthModule } from './modules/core/auth/auth.module';
             envFilePath: `.env.${process.env.NODE_ENV}`,
             load: [appConfig, mongodbConfig],
         }),
+        // 缓存
+        CacheModule.register({ isGlobal: true }),
         // 数据库连接
         DatabaseModule,
         // 国际化 i18n
@@ -62,6 +66,13 @@ import { AuthModule } from './modules/core/auth/auth.module';
         {
             provide: APP_PIPE,
             useClass: RequestValidationSchemaPipe,
+        },
+
+        // 守卫
+        {
+            // JWT认证守卫
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
         },
     ],
 })
