@@ -1,4 +1,5 @@
 import { isDev } from '@/config';
+import { UserModule } from '@/modules/admin/user/user.module';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,9 +16,9 @@ const strategies = [LocalStrategy, JwtStrategy];
 
 @Module({
     imports: [
-        MongooseModule.forFeatureAsync([
-            { name: AccessToken.name, useFactory: () => AccessTokenSchema },
-            { name: RefreshToken.name, useFactory: () => RefreshTokenSchema },
+        MongooseModule.forFeature([
+            { name: AccessToken.name, schema: AccessTokenSchema },
+            { name: RefreshToken.name, schema: RefreshTokenSchema },
         ]),
         PassportModule,
         JwtModule.registerAsync({
@@ -35,9 +36,10 @@ const strategies = [LocalStrategy, JwtStrategy];
             },
             inject: [ConfigService],
         }),
+        UserModule,
     ],
     controllers: [AuthController],
-    providers: [...providers, ...strategies],
-    exports: [JwtModule, ...providers],
+    providers: [...strategies, ...providers],
+    exports: [MongooseModule, JwtModule, ...providers],
 })
 export class AuthModule {}

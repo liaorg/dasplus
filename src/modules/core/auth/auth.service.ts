@@ -1,9 +1,12 @@
 import { AdapterRequest } from '@/common/adapters';
+import { RequestUserDto } from '@/common/dto';
 import { genAuthTokenKey } from '@/common/helps';
+import { compareUserPasswrod } from '@/common/utils';
+import { UserService } from '@/modules/admin/user/user.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { RequestUserDto } from './dto';
+import { TokenPayloadDto } from './dto';
 import { TokenService } from './services';
 
 @Injectable()
@@ -11,6 +14,7 @@ export class AuthService {
     constructor(
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private tokenService: TokenService,
+        private userService: UserService,
     ) {}
 
     /**
@@ -21,25 +25,26 @@ export class AuthService {
      * @returns
      */
     async validateLoginUser(request: AdapterRequest, username: string, password: string) {
-        console.log('22::: ', 22, username, password);
-        // 登录安全验证：验证码 双因子等
-        // 锁定客户端
         // 查找用户，角色
-        return { _id: '111', roleId: '2222', name: 'test' };
-        // const user = await this.userService.findUserByUserName(credential);
-
-        // if (isEmpty(user)) throw new BusinessException(ErrorEnum.USER_NOT_FOUND);
-
-        // const comparePassword = md5(`${password}${user.psalt}`);
-        // if (user.password !== comparePassword)
-        //     throw new BusinessException(ErrorEnum.INVALID_USERNAME_PASSWORD);
-
-        // if (user) {
-        //     const { password, ...result } = user;
-        //     return result;
-        // }
-
-        // return null;
+        // 获取指定用户包含密码
+        const options = {
+            populate: {
+                path: 'role',
+                select: ['_id', 'name', 'isDefault'],
+                populate: { path: 'roleGroup', select: ['_id', 'type', 'name'] },
+            },
+        };
+        const user = await this.userService.findOneContainPassword({ name: username }, options);
+        if (!user) {
+            // 用户不存在
+            return null;
+        }
+        // 通过密码盐，加密传参，再与数据库里的比较，判断是否相等
+        if (await compareUserPasswrod(password, user.password)) {
+            return user;
+        }
+        // 密码错误
+        return undefined;
     }
 
     /**
@@ -49,7 +54,7 @@ export class AuthService {
      * @param password
      * @returns
      */
-    async validateJwtUser(payload: any) {
+    async validateJwtUser(payload: TokenPayloadDto) {
         // 查找用户，角色
         // 获取登录安全配置
         // const loginSafety = await this.systemConfigureService.getLoginSafety();
@@ -108,6 +113,7 @@ export class AuthService {
 
         // await this.loginLogService.create(user.id, ip, ua);
 
+        // 获取用户信息
         return token.accessToken.value;
     }
 

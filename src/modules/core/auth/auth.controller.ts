@@ -1,16 +1,18 @@
+import { OpenApiHeaderConfigure } from '@/common/constants';
 import { ApiResult } from '@/common/decorators';
+import { RequestUserDto } from '@/common/dto';
 import { Controller, Headers, Ip, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { PublicDecorator, RequestUserDecorator } from './decorators';
-import { RequestUserDto } from './dto';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards';
 
 @ApiTags('Auth')
-// @ApiHeader(OpenApiHeaderConfigure)
+@ApiHeader(OpenApiHeaderConfigure)
 @UseGuards(LocalAuthGuard)
 @PublicDecorator()
+// @Controller('admin/user')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly service: AuthService) {}
@@ -22,7 +24,7 @@ export class AuthController {
      */
     @ApiOperation({ summary: '登录' })
     @ApiBody({ type: LoginDto })
-    @ApiResult({ status: 200, type: Object })
+    @ApiResult({ type: Object })
     @Post('login')
     async login(
         @RequestUserDecorator() loginUser: RequestUserDto,
@@ -30,10 +32,9 @@ export class AuthController {
         @Ip() ip: string,
     ) {
         // 登录
-        console.log('user::: ', loginUser);
         const ua = headers['user-agent'];
         const token = await this.service.login(loginUser, ip, ua);
-        return { token, ua };
+        return { token };
         // 生成 token
         // const token = await this.service.createToken(user, ip);
         // // 获取用户信息

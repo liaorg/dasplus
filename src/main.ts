@@ -41,7 +41,8 @@ async function bootstrap() {
         if (!isMainProcess) return;
 
         const logger = new Logger(adapterName);
-        logger.log(`Server running on ${url}`);
+        logger.log(`Server running on: ${url}`);
+        logger.log(`OpenAPI running on: ${url}/api-docs`);
     });
 
     // 热更新

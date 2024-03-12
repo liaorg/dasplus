@@ -1,0 +1,53 @@
+{
+    "export": "导出操作日志 {name}",
+    "download": "下载操作日志文件 {name}",
+    "actionConfOperate": "修改操作日志响应配置，修改{content}等日志类型的响应配置",
+    "actionConfRuntime": "修改运行日志响应配置，修改{content}等日志类型的响应配置",
+    "type": {
+        "allOperate": "全部操作",
+        "otherOperate": "其它操作",
+        "login": "用户登录",
+        "logout": "用户退出",
+        "configModify": "配置修改",
+        "systemAdmin": "系统管理",
+        "businessOperate": "业务操作",
+        "export": "导出",
+        "import": "导入",
+        "createFile": "下载",
+        "allRuntime": "全部运行",
+        "otherRuntime": "其它运行",
+        "normal": "运行正常",
+        "abnormal": "系统异常"
+    },
+    "module": "操作日志",
+    "logtype": "日志类型",
+    "operateDate": "操作时间",
+    "content": "日志内容",
+    "operator": "操作者",
+    "operatorIp": "登录IP",
+    "moduleRuntime": "运行日志",
+    "runtimeDate": "运行时间",
+    "exportRuntime": "导出运行日志 {name}",
+    "downloadRuntime": "下载运行日志文件 {name}",
+    "moduleKeepTime": "日志保留时间配置",
+    "updateLogKeepTime": "修改保留时间配置，{content}",
+    "error": {
+        "addFailed": "添加操作日志失败",
+        "fileNotExisted": "文件不存在",
+        "queryLogKeepTimeFailed": "获取日志保留时间配置失败",
+        "updateLogKeepTimeFailed": "修改日志保留时间配置失败",
+        "queryFailed": "查询日志信息失败",
+        "existedConf": "日志保留时间配置已存在请传oid值",
+        "queryReplyConfFailed": "日志保留时间配置已存在请传oid值",
+        "existedReplyConf": "响应配置已经存在请传正确的oid值",
+        "actionConfFailed": "日志响应配置失败"
+    },
+    "log": {
+        "keeptime": "{status}指定保留时间",
+        "enable": "启用",
+        "disable": "停用",
+        "sql_log": "普通日志保留天数由 {source} 天修改为 {target} 天",
+        "event_log": "事件日志保留天数由 {source} 天修改为 {target} 天",
+        "system_log": "系统自身日志保留天数由 {source} 天修改为 {target} 天"
+    }
+}

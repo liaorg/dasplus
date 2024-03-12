@@ -1,0 +1,31 @@
+{
+    "module": "数据脱敏",
+    "add": "添加数据脱敏配置 {name}",
+    "update": "修改数据脱敏配置 {name}",
+    "delete": "删除数据脱敏配置 {name}",
+    "statusEnable": "启用数据脱敏配置 {name}",
+    "statusDisable": "停用数据脱敏配置 {name}",
+    "user": "自定义",
+    "factory": "默认",
+    "enable": "启用",
+    "disable": "停用",
+    "error": {
+        "queryFailed": "获取数据脱敏配置失败",
+        "existedName": "名称 {name} 已经存在",
+        "notExisted": "数据脱敏配置 {name} 不存在",
+        "addFailed": "添加数据脱敏配置失败",
+        "updateFailed": "修改数据脱敏配置 {name} 失败",
+        "deleteFailed": "删除数据脱敏配置 {name} 失败",
+        "updateStatusFailed": "修改数据脱敏配置 {name} 状态失败"
+    },
+    "log": {
+        "name": "名称",
+        "regex": "正则表达式",
+        "sample": "示例",
+        "description": "描述",
+        "mask_public_left": "公开的前缀",
+        "mask_public_right": "公开的后缀",
+        "maskchr": "填充字符",
+        "changeName": "名称修改为 {name}"
+    }
+}

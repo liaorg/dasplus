@@ -1,0 +1,9 @@
+{
+    "systemAdmin": "系统管理员组",
+    "securityAdmin": "系统安全员组",
+    "auditAdmin": "系统审计员组",
+    "error": {
+        "existedName": "角色组名已经存在",
+        "notExisted": "角色组不存在"
+    }
+}

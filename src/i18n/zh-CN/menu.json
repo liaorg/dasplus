@@ -1,0 +1,54 @@
+{
+    "monitorCenter": "监控中心",
+    "runningState": "运行状态",
+    "databaseOperation": "运维分析",
+
+    "auditCenter": "审计中心",
+    "statement": "语句查询",
+    "eventViewing": "事件查询",
+    "sqlTemplate": "SQL模板",
+
+    "analysisCenter": "数据分析",
+    "reportTask": "报表任务",
+    "reportsView": "报告查看",
+    "cycleReports": "报表",
+    "onceReports": "报表",
+
+    "strategyCenter": "策略管理",
+    "rule": "事件定义",
+    "strategyObject": "对象管理",
+    "clientinfo": "客户端信息",
+    "desensitization": "数据脱敏",
+
+    "deployCenter": "部署管理",
+    "business": "业务系统配置",
+    "prob": "探针管理",
+    "dbDiscovery": "数据库发现",
+
+    "systemCenter": "系统管理",
+    "user": "用户管理",
+    "role": "角色管理",
+    "service": "系统服务",
+    "maintain": "系统维护",
+    "systemProfile": "系统信息",
+
+    "systemConfCenter": "系统配置",
+    "network": "网卡配置",
+    "staticRoute": "静态路由",
+    "backupAndRestore": "配置备份和还原",
+    "securityConfigure": "安全配置",
+    "responseConfigure": "响应配置",
+    "timeConfigure": "时间配置",
+    "archive": "数据归档",
+
+    "logCenter": "日志管理",
+    "operateLog": "操作日志",
+    "runtimeLog": "运行日志",
+    "keepTime": "保留时间配置",
+
+    "error": {
+        "notExisted": "菜单权限不存在",
+        "mustContainRoute": "必须包含菜单权限",
+        "containNoneRoute": "包含不存在的菜单权限"
+    }
+}

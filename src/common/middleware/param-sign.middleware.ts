@@ -39,10 +39,8 @@ export async function paramSignMiddleware(req: AdapterRequest, res: AdapterRespo
         }
         next();
     } catch (e: any) {
-        if (isDev) {
-            const logger = new Logger('ParamSignMiddleware');
-            logger.error(e, e?.stack);
-        }
+        const logger = new Logger('ParamSignMiddleware');
+        logger.error(e, isDev ? e?.stack : undefined);
 
         const sendData = {
             statusCode: 500,

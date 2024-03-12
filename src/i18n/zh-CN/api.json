@@ -1,5 +1,28 @@
 {
-    "hello": "nestjs",
+    "exportAll": "导出全部{name}",
+    "exportSelected": "导出{num}条{name}",
+    "import": "导入{name}",
+    "dot": "、",
+    "log": {
+        "update": "修改{moduleType} {name}，修改{content}等配置项{other}",
+        "modify": "修改{moduleType} {name}，修改后{content}",
+        "replace": "修改{moduleType}，修改后{content}",
+        "other": "，{other}"
+    },
+    "module": {
+        "user": "用户",
+        "role": "角色",
+        "rule": "规则",
+        "object": "对象",
+        "client": "客户端信息",
+        "desensitization": "数据脱敏配置",
+        "business": "业务系统",
+        "dbDiscovery": "数据库发现扫描配置",
+        "probe": "探针",
+        "network": "网卡",
+        "staticRoute": "静态路由",
+        "reportTask": "报表任务"
+    },
     "error": {
         "requestTimeout": "请求超时",
         "requestSuccess": "请求成功",

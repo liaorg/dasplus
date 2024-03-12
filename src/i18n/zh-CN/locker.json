@@ -1,0 +1,9 @@
+{
+    "module": "锁定客户端",
+    "unlock": "解锁客户端 {address}",
+    "error": {
+        "addFailed": "添加锁定客户端 {address} 失败",
+        "notExisted": "客户端 {address} 不存在",
+        "unLockFailed": "解锁客户端 {address} 失败"
+    }
+}

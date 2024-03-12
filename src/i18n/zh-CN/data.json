@@ -1,0 +1,9 @@
+{
+    "error": {
+        "serverError": "服务器错误",
+        "forbidden": "没有权限",
+        "badParams": "错误的请求参数",
+        "includeNotExistFile": "包含已删除的文件 {files}"
+    },
+    "validate": {}
+}

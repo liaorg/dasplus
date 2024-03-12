@@ -1,6 +1,6 @@
 import { AdapterResponse } from '@/common/adapters';
+import { RequestUserDto } from '@/common/dto';
 import { ObjectIdType } from '@/common/interfaces';
-import { MongoDbService } from '@/common/services';
 import { getUTCTime, isEmpty, toObjectId } from '@/common/utils';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Dayjs } from 'dayjs';
 import { ClientSession, FlattenMaps, Model } from 'mongoose';
 import { nanoid } from 'nanoid/async';
-import { RequestUserDto, TokenPayloadDto } from '../dto';
+import { TokenPayloadDto } from '../dto';
 import { AccessToken, AccessTokenDocument, RefreshToken } from '../schemas';
 
 /**
@@ -18,17 +18,12 @@ import { AccessToken, AccessTokenDocument, RefreshToken } from '../schemas';
  */
 @Injectable()
 export class TokenService {
-    private readonly accessTokenService: MongoDbService<AccessToken>;
-    private readonly refreshTokenService: MongoDbService<RefreshToken>;
     constructor(
         private readonly configService: ConfigService,
         private readonly jwtService: JwtService,
         @InjectModel(AccessToken.name) private readonly accessTokenModel: Model<AccessToken>,
         @InjectModel(RefreshToken.name) private readonly refreshTokenModel: Model<RefreshToken>,
-    ) {
-        this.accessTokenService = new MongoDbService(this.accessTokenModel);
-        this.refreshTokenService = new MongoDbService(this.refreshTokenModel);
-    }
+    ) {}
     /**
      * 根据accessToken刷新AccessToken与RefreshToken
      * @param accessToken
@@ -49,7 +44,7 @@ export class TokenService {
             const loginUser: RequestUserDto = { _id: user.toString(), roleId: role.toString() };
             const token = await this.generateAccessToken(loginUser, login_ip);
             // 删除旧的 token
-            await this.accessTokenService.deleteOne({ filter: { _id } });
+            await this.accessTokenModel.deleteOne({ _id });
             response.header('token', token.accessToken.value);
             return token;
         }
@@ -83,7 +78,8 @@ export class TokenService {
             expiredAt: now.add(tokenExpired, 'second').unix(),
         });
         // accessToken 存入数据库
-        await this.accessTokenService.insert({ doc: accessToken });
+        await accessToken.save();
+        // await this.accessTokenModel.insertMany({ doc: accessToken });
 
         // 生成刷新令牌
         const refreshToken = await this.generateRefreshToken(accessToken, getUTCTime());
@@ -109,7 +105,7 @@ export class TokenService {
             expiredAt: now.add(refreshTokenExpired, 'second').unix(),
         });
         // refreshToken 存入数据库
-        await this.refreshTokenService.insert({ doc: refreshToken });
+        await refreshToken.save();
         return refreshToken;
     }
     /**
@@ -120,7 +116,7 @@ export class TokenService {
      */
     async getRefreshTokenByAccessToken(accessTokenId: ObjectIdType): Promise<RefreshToken> {
         const aid = toObjectId(accessTokenId);
-        return await this.refreshTokenService.findOne({ filter: { accessToken: aid } });
+        return await this.refreshTokenModel.findOne({ accessToken: aid });
     }
 
     /**
@@ -130,9 +126,7 @@ export class TokenService {
      * @returns
      */
     async checkAccessToken(value: string) {
-        return await this.accessTokenService.findOne({
-            filter: { value },
-        });
+        return await this.accessTokenModel.findOne({ value });
     }
 
     /**
@@ -141,13 +135,13 @@ export class TokenService {
      * @param {string} value
      */
     async removeAccessToken(value: string) {
-        const accessToken = await this.accessTokenService.findOne({ filter: { value } });
+        const accessToken = await this.accessTokenModel.findOne({ value });
         if (accessToken) {
             await Promise.all([
                 // 删除 RefreshToken
-                this.refreshTokenService.findOneAndDelete({ filter: { accessToken: accessToken._id } }),
+                this.refreshTokenModel.findOneAndDelete({ accessToken: accessToken._id }),
                 // 删除 AccessToken
-                this.accessTokenService.deleteOne({ filter: { _id: accessToken._id } }),
+                this.refreshTokenModel.deleteOne({ _id: accessToken._id }),
             ]);
         }
     }
@@ -162,10 +156,7 @@ export class TokenService {
     async clearAccessToken(userIds: ObjectIdType[], session?: ClientSession) {
         // 先查询
         const uids = toObjectId(userIds);
-        const accessToken = await this.accessTokenService.find({
-            filter: { user: { $in: uids } },
-            options: { session },
-        });
+        const accessToken = await this.accessTokenModel.find({ user: { $in: uids } }, null, { session });
         const accessTokenIds = [];
         !isEmpty(accessToken) &&
             accessToken.forEach((value) => {
@@ -174,11 +165,11 @@ export class TokenService {
         if (accessTokenIds.length) {
             await Promise.all([
                 // 删除 RefreshToken
-                this.refreshTokenService.deleteMany({
-                    filter: { accessToken: { $in: accessTokenIds } },
+                this.refreshTokenModel.deleteMany({
+                    accessToken: { $in: accessTokenIds },
                 }),
                 // 删除 AccessToken
-                this.accessTokenService.deleteMany({ filter: { _id: { $in: accessTokenIds } } }),
+                this.refreshTokenModel.deleteMany({ _id: { $in: accessTokenIds } }),
             ]);
         }
         return true;
@@ -194,7 +185,7 @@ export class TokenService {
     async clearAccessTokenByRoleId(roleIds: ObjectIdType[]) {
         // 先查询
         const rids = toObjectId(roleIds);
-        const accessToken = await this.accessTokenService.find({ filter: { role: { $in: rids } } });
+        const accessToken = await this.accessTokenModel.find({ role: { $in: rids } });
         const accessTokenIds = [];
         !isEmpty(accessToken) &&
             accessToken.forEach((value) => {
@@ -203,11 +194,11 @@ export class TokenService {
         if (accessTokenIds.length) {
             await Promise.all([
                 // 删除 RefreshToken
-                this.refreshTokenService.deleteMany({
-                    filter: { accessToken: { $in: accessTokenIds } },
+                this.refreshTokenModel.deleteMany({
+                    accessToken: { $in: accessTokenIds },
                 }),
                 // 删除 AccessToken
-                this.accessTokenService.deleteMany({ filter: { _id: { $in: accessTokenIds } } }),
+                this.refreshTokenModel.deleteMany({ _id: { $in: accessTokenIds } }),
             ]);
         }
         return true;
@@ -227,10 +218,7 @@ export class TokenService {
             create_date: now,
             update_date: now,
         };
-        return await this.accessTokenService.updateOne({
-            filter: { user: userId, login_ip: ip },
-            doc,
-        });
+        return await this.accessTokenModel.updateOne({ user: userId, login_ip: ip }, doc);
     }
 
     /**

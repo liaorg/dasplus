@@ -1,11 +1,12 @@
 /*
 https://docs.nestjs.com/guards#guards
 */
+import { AuthError } from '@/common/constants';
+import { RequestUserDto } from '@/common/dto';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthException } from '../auth.exception';
-import { AdminUserRoleRouteConst, AuthError, ExcludeAdminUserRoute } from '../constants';
-import { RequestUserDto } from '../dto';
+import { AdminUserRoleRouteConst, ExcludeAdminUserRoute } from '../constants';
 
 /**
  * 系统管理员组角色下的用户

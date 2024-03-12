@@ -56,11 +56,11 @@ export async function setupSwagger(app: AdapterApplication): Promise<AdapterAppl
                 persistAuthorization: true,
             },
         });
-        const { HOST, PORT } = process.env;
-        Logger.log(
-            `OpenAPI: http://${HOST || '127.0.0.1'}:${parseInt(PORT) || 6100}/api-docs`,
-            'SwaggerModule',
-        );
+        // const { HOST, PORT } = process.env;
+        // Logger.log(
+        //     `OpenAPI: http://${HOST || '127.0.0.1'}:${parseInt(PORT) || 6100}/api-docs`,
+        //     'SwaggerModule',
+        // );
     } catch (error: any) {
         Logger.error(error, error?.stack, 'SwaggerModule');
     }

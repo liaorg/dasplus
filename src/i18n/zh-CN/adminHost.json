@@ -1,0 +1,30 @@
+{
+    "module": "管理主机配置",
+    "add": "添加管理主机 {address}",
+    "modify": "修改管理主机 {address}，修改后{content}",
+    "del": "删除管理主机 {address}",
+    "status": "设置管理主机 {address} 状态为{status}",
+    "error": {
+        "notExisted": "管理主机 {id} 不存在",
+        "addFailed": "添加管理主机 {address} 失败",
+        "updateFailed": "修改管理主机 {address} 失败",
+        "deleteFailed": "删除管理主机 {address} 失败",
+        "existedAddress": "目标网络 {address} 已存在",
+        "containNotExist": "包含不存在的管理主机 {address}",
+        "upFailed": "启用管理主机 {address} 失败",
+        "downFailed": "停用管理主机 {address} 失败",
+        "mustLeastOne": "请输入 IPV4 或 IPV6 地址",
+        "enableFailed": "管理主机规则应用失败"
+    },
+    "log": {
+        "status": "是否生效：{content}",
+        "description": "描述：{content}",
+        "ipv4address": "IPV4地址：{content}",
+        "ipv4netmask": "子网掩码：{content}",
+        "mac": "MAC地址：{content}",
+        "ipv6address": "IPV6地址：{content}",
+        "ipv6prefixlen": "前缀长度：{content}",
+        "statusTrue": "生效",
+        "statusFalse": "失效"
+    }
+}

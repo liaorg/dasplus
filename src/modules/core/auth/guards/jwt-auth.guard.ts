@@ -2,14 +2,14 @@
 https://docs.nestjs.com/guards#guards
 */
 import { AdapterRequest } from '@/common/adapters';
+import { AuthError } from '@/common/constants';
 import { isEmpty } from '@/common/utils';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ExtractJwt } from 'passport-jwt';
 import { AuthException } from '../auth.exception';
-import { AuthService } from '../auth.service';
-import { AuthError, AuthStrategy, IS_PUBLIC_KEY } from '../constants';
+import { AuthStrategy, IS_PUBLIC_KEY } from '../constants';
 import { TokenService } from '../services';
 
 /**
@@ -25,7 +25,7 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
     constructor(
         private reflector: Reflector,
         private readonly tokenService: TokenService,
-        private authService: AuthService,
+        // private authService: AuthService,
         // private readonly systemConfigureService: SystemConfigureService,
     ) {
         super();
@@ -43,6 +43,9 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
             context.getHandler(),
             context.getClass(),
         ]);
+        // 需要后置判断 这样携带了 token 的用户就能够解析到 request.user
+        if (isPublic) return true;
+
         // 从请求头中获取token
         // 如果请求头不含有authorization字段则认证失败
         const request = context.switchToHttp().getRequest<AdapterRequest>();
@@ -53,9 +56,6 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
             const { token } = request?.query as Record<string, string>;
             if (token) request.headers.authorization = `Bearer ${token}`;
         }
-
-        // 需要后置判断 这样携带了 token 的用户就能够解析到 request.user
-        if (isPublic) return true;
 
         const requestToken = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
         if (!requestToken) {
@@ -97,7 +97,11 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
         // const cacheToken = await this.authService.getTokenByUid(userId);
         // if (requestToken !== cacheToken) {
         //   // 与缓存保存不一致 即二次登录
-        //   throw new ApiException(ErrorEnum.CODE_1106);
+        // const error = {
+        //     statusCode: 401,
+        //     ...AuthError.unauthorized,
+        // };
+        // throw new AuthException(error);
         // }
         return result;
     }

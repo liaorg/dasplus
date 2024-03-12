@@ -2,7 +2,6 @@ import { ObjectIdType } from '@/common/interfaces';
 import { CommonDate } from '@/common/schemas';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { PermissionDocument } from '../../permission/schemas';
 import { RoleGroupTypeEnum } from '../enums';
 
 export type RoleGroupDocument = HydratedDocument<RoleGroup>;
@@ -32,7 +31,7 @@ export class RoleGroup extends CommonDate {
 
     // 权限
     @Prop({ type: [{ type: Types.ObjectId, ref: 'Permission' }] })
-    permissions: PermissionDocument[] | ObjectIdType[];
+    permissions: ObjectIdType[];
 
     // 排序
     @Prop({ type: Number, default: 999 })

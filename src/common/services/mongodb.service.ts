@@ -31,7 +31,7 @@ export type ObjectIdType = Types.ObjectId | string | number;
  */
 @Injectable()
 export class MongoDbService<TM = any, TD = HydratedDocument<TM>> {
-    private logger = new Logger(MongoDbService.name);
+    protected logger = new Logger(MongoDbService.name);
     protected model: Model<TM>;
     constructor(model: Model<TM>) {
         try {
@@ -596,6 +596,7 @@ export class MongoDbService<TM = any, TD = HydratedDocument<TM>> {
             } else {
                 error = {
                     ...ApiError.serverError,
+                    statusCode: 500,
                 };
                 const errorMsg = err ? err?.toString() : '';
                 throw new MongodbException(error, { params, errorMsg, err });

@@ -1,0 +1,81 @@
+{
+    "time": {
+        "module": "时间配置",
+        "modify": "修改时间配置，修改{content}等配置项{other}",
+        "update": "修改时间配置，时间修改为：{content}",
+        "log": {
+            "timezone": "UTC设置",
+            "asyncType": "同步时间源",
+            "ntpIpOrDomain": "NTP服务地址",
+            "orcleIp": "Oracle服务器IP",
+            "orclePort": "Oracle端口",
+            "orcleUsername": "Oracle用户名",
+            "orclePassword": "Oracle密码",
+            "orcleInstanceName": "Oracle实例名",
+            "changeAsyncType": "同步时间源修改为：{content}",
+            "changeTime": "时间修改为：{content}",
+            "asyncType0": "不同步",
+            "asyncType1": "从网络上同步",
+            "asyncType2": "从数据库服务器上同步"
+        }
+    },
+    "security": {
+        "enableToTrue": "启用",
+        "enableToFalse": "停用",
+        "yes": "是",
+        "no": "否",
+        "loginSafety": {
+            "module": "登录安全配置",
+            "modify": "修改登录安全配置，{content}",
+            "log": {
+                "numOfLoginFailedToLocked": "登录失败次数锁定由 {source} 次修改为 {target} 次",
+                "timeOfLoginFailedToLocked": "登录失败锁定时间由 {source} 分钟修改为 {target} 分钟",
+                "timeOfLogout": "无操作自动注销时间由 {source} 分钟修改为 {target} 分钟",
+                "timeLimitOfPassword": "口令使用期限由 {source} 天修改为 {target} 天",
+                "timeOfMaintain": "维护提醒周期由 {source} 天钟修改为 {target} 天",
+                "statusOfcaptcha": "验证码开关：{status}",
+                "forceReset": "强制重置密码：{status}"
+            }
+        },
+        "passwordSafety": {
+            "module": "密码安全配置",
+            "modify": "修改密码安全配置，{content}",
+            "log": {
+                "minLength": "最短密码长度由 {source} 个字符修改为 {target} 个字符",
+                "maxSameLetter": "密码中允许同一字符连续出现的最大次数由 {source} 次修改为 {target} 次",
+                "complexity": "密码复杂度修改为：{content}",
+                "lowercase": "至少包括一个小写字母",
+                "uppercase": "至少包括一个大写字母",
+                "number": "至少包括一个数字字符",
+                "specialLetter": "至少包括一个非数字和非字母的字符",
+                "weakCheck": "弱密码检测：{status}"
+            }
+        },
+        "serverPort": {
+            "module": "端口安全配置",
+            "modify": "修改 {server} 端口安全配置: {content}",
+            "log": {
+                "up": "启用端口 {port}",
+                "down": "停用端口 {port}"
+            }
+        },
+        "remoteDebug": {
+            "module": "远程调试配置",
+            "modify": "修改远程调试配置: {content}",
+            "log": {
+                "up": "启用远程调试",
+                "down": "停用远程调试"
+            }
+        }
+    },
+    "error": {
+        "notExisted": "配置不存在",
+        "addFailed": "添加配置失败",
+        "updateFailed": "修改配置失败",
+        "getConfigureFailed": "获取配置失败",
+        "updateTimeFailed": "配置保存成功，同步时间失败 {failedMsg}",
+        "serverNotExisted": "服务 {server} 不存在",
+        "portNotExisted": "端口 {port} 不存在"
+    },
+    "other": "，{other}"
+}

@@ -35,7 +35,6 @@ import { REQUEST_SCHEMA_VALIDATION } from '../constants';
 export class RequestValidationSchemaPipe implements PipeTransform {
     transform(value: any, metadata: ArgumentMetadata) {
         const { metatype, type } = metadata;
-
         // 参数类型是自定义类型时直接返回
         if (type === 'custom') {
             return value;

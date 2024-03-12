@@ -4,17 +4,18 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { AcceptLanguageResolver, HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './common/database';
 import { AnyExceptionFilter } from './common/filters';
-import { TimeoutInterceptor } from './common/interceptors';
+import { OperateLoggerInterceptor, TimeoutInterceptor } from './common/interceptors';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { decryptDataMiddleware, paramSignMiddleware } from './common/middleware';
 import { RequestValidationSchemaPipe } from './common/pipes';
 import { appConfig, isDev, mongodbConfig } from './config';
+import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/core/auth/auth.module';
-import { JwtAuthGuard } from './modules/core/auth/guards';
+import { JwtAuthGuard, LockerGuard, RoleGuard } from './modules/core/auth/guards';
+import { SystemConfigureModule } from './modules/core/system-configure/system-configure.module';
+import { DataModule } from './modules/data/data.module';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
@@ -45,12 +46,13 @@ import { SharedModule } from './shared/shared.module';
             resolvers: [new HeaderResolver(['x-das-lang']), AcceptLanguageResolver],
         }),
         SharedModule,
+        SystemConfigureModule,
         AuthModule,
+        AdminModule,
+        DataModule,
     ],
-    controllers: [AppController],
     providers: [
         // 全局响应映射，从上往下注册，从下往上执行
-        AppService,
         // 过滤器
         // 全局异常处理，从下往上执行
         { provide: APP_FILTER, useClass: AnyExceptionFilter },
@@ -60,6 +62,8 @@ import { SharedModule } from './shared/shared.module';
         { provide: APP_INTERCEPTOR, useFactory: () => new TimeoutInterceptor(15 * 1000) },
         // 数据转换
         { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
+        // 操作日志
+        { provide: APP_INTERCEPTOR, useClass: OperateLoggerInterceptor },
 
         // 管道
         // 全局 request 参数验证
@@ -70,9 +74,19 @@ import { SharedModule } from './shared/shared.module';
 
         // 守卫
         {
+            // 客户端锁定守卫
+            provide: APP_GUARD,
+            useClass: LockerGuard,
+        },
+        {
             // JWT认证守卫
             provide: APP_GUARD,
             useClass: JwtAuthGuard,
+        },
+        {
+            // 角色路由守卫
+            provide: APP_GUARD,
+            useClass: RoleGuard,
         },
     ],
 })

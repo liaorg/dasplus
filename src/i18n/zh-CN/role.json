@@ -1,0 +1,42 @@
+{
+    "systemAdmin": "系统管理员组",
+    "securityAdmin": "系统安全员组",
+    "auditAdmin": "系统审计员组",
+    "defaultSystemAdmin": "默认系统管理员",
+    "defaultSecurityAdmin": "默认系统安全员",
+    "defaultAuditAdmin": "默认系统审计员",
+    "module": "角色管理",
+    "add": "添加角色 {name}",
+    "modify": "修改角色 {name} 的信息",
+    "del": "删除角色 {name}",
+    "updateDefaultAdminer": "设置 {roleGroup} 角色组的默认管理员为 {user}",
+    "error": {
+        "existedName": "角色名 {name} 已经存在",
+        "errorid": "错误的角色id {id}",
+        "notExisted": "角色 {id} 不存在",
+        "deleteFailed": "删除角色失败",
+        "unDeleteDefault": "不能删除默认角色",
+        "unContainLoginUserRole": "不能删除当前登录用户所属于的角色",
+        "addFailed": "添加角色失败",
+        "updateFailed": "修改角色失败",
+        "unModifyDefaultRoleNameMenuBusiness": "不能修改默认角色的角色组、业务权限、菜单权限",
+        "permissionNotExisted": "权限不存在",
+        "containNonePermission": "包含角色组不存在的权限",
+        "mustDefaultRole": "默认角色才能设置默认管理员",
+        "notContainUser": "用户id {userId} 不在角色 {roleId} 中",
+        "requiredName": "角色名不能为空",
+        "lengthName": "角色名长度为 {constraints.0} - {constraints.1}",
+        "requiredMenu": "角色菜单不能为空"
+    },
+    "log": {
+        "defaultSystemAdmin": "系统管理员",
+        "defaultSecurityAdmin": "系统安全员",
+        "defaultAuditAdmin": "系统审计员",
+        "name": "角色名称",
+        "description": "描述",
+        "roleGroup": "角色组",
+        "defaultUser": "默认管理员",
+        "permissions": "菜单权限",
+        "changeName": "角色名称修改为 {name}"
+    }
+}

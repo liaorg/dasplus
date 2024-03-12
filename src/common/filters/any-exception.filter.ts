@@ -58,9 +58,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
         let errorCode = ApiError.unknowError.errorCode;
         let message = ApiError.unknowError.langKeyword;
 
-        let logFormat = `${requestContent} \t Response: ${status}`;
-        const stackInfo = typeof exception.stack === 'function' ? exception.stack() : exception.stack;
-        logFormat += isDev ? ` ${stackInfo}` : '';
+        let logFormat = `${requestContent} \t Response: ${status} ${exception}`;
 
         let uploadMessage = '';
         // 自定义返回信息
@@ -103,8 +101,14 @@ export class AnyExceptionFilter implements ExceptionFilter {
         }
 
         // 根据状态码，进行日志类型区分
-        if (status >= 500 && !(exception instanceof ApiException)) {
-            Logger.error(exception, isDev ? stackInfo : undefined, `${AnyExceptionFilter.name} Catch`);
+        if (status >= 500) {
+            const stackInfo =
+                typeof exception?.stack === 'function' ? exception.stack() : exception?.stack;
+            Logger.error(
+                detailMessage,
+                isDev ? stackInfo : undefined,
+                `${AnyExceptionFilter.name} Catch`,
+            );
         } else if (status === 404) {
             message = '';
             this.logger.warn(

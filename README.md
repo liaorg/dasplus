@@ -193,33 +193,36 @@ npm install --save nestjs-i18n
 
 # nest-cli.json
 
+```json
 {
-"collection": "@nestjs/schematics",
-"sourceRoot": "src",
-"compilerOptions": {
-"assets": [
-{ "include": "i18n/**/*", "watchAssets": true }
-]
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "src",
+    "compilerOptions": {
+        "assets": [{ "include": "i18n/**/*", "watchAssets": true }]
+    }
 }
-}
+```
 
 # app.module.ts
 
+```ts
 @Module({
-imports: [
-I18nModule.forRoot({
-fallbackLanguage: 'en',
-loaderOptions: {
-path: path.join(__dirname, '/i18n/'),
-watch: true,
-},
-}),
-],
-controllers: [],
+    imports: [
+        I18nModule.forRoot({
+            fallbackLanguage: 'en',
+            loaderOptions: {
+                path: path.join(__dirname, '/i18n/'),
+                watch: true,
+            },
+        }),
+    ],
+    controllers: [],
 })
+```
 
 # users.service.ts / users.controller.ts
 
+```ts
 constructor(private readonly i18nService: I18nService) {}
 
 ```
@@ -230,7 +233,7 @@ constructor(private readonly i18nService: I18nService) {}
 
 npm install --save @nestjs/serve-static
 
-````
+```
 
 ## curd
 
@@ -240,7 +243,7 @@ npm install @nestjsx/crud class-transformer class-validator
 npm install @nestjs/typeorm typeorm --save
 or
 npm install --save @nestjs/mongoose mongoose
-````
+```
 
 ## 模块开发流程
 
@@ -267,21 +270,17 @@ import { OperateLogEnum } from '@/common/enum';
 // -- swagger 设置 --begain
 // 设置标题
 @ApiTags('角色管理')
-// 头部参数设置
-@ApiHeader(OpenApiHeaderConfigure)
-// 返回参数设置
-@ApiResponse({ status: 200, type: OpenApiResponseDto })
 // token 参数设置
-@ApiBearerAuth()
+@ApiSecurityAuth()
 // -- swagger 设置 --end
-// 不要验证 token
-@GuestDecorator()
 @Controller(`${appConfig.adminPrefix}role`)
 export class RoleController {
     private logMoudle = 'role.module';
     private logType = OperateLogEnum.systemAdmin;
     constructor(private readonly service: RoleService) {}
     @ApiOperation({ summary: 'xxx' })
+    // @ApiResult({ status: 200, type: RoleListDto, isPage: true })
+    @ApiResult({ type: RoleListDto })
     @Get(@RequestUserDecorator() loginUser: RequestUserDto)
     get() {
         //
@@ -291,15 +290,40 @@ export class RoleController {
 
 ```ts
 // role.service.ts
-import { DbBaseService } from '@/common/services';
+import { BaseService } from '@/common/services';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class RoleService extends MongoDbService<Role, RoleDocument> {
-    constructor(@InjectModel(Role.name) protected model: Model<Role>) {
-        super(model);
+export class RoleService extends BaseService<Role> {
+    constructor(
+        @InjectMongooseRepository(Role.name) protected readonly repository: MongooseRepository<Role>,
+        // 有循环依赖时
+        @Inject(forwardRef(() => MenuService)) private readonly menuService: MenuService,
+    ) {
+        super(repository);
     }
 }
+```
+
+```ts
+// role.module.ts
+const providers = [RoleService];
+
+@Module({
+    imports: [
+        MongooseRepositoryModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
+        // 有循环依赖时
+        forwardRef(() => MenuModule),
+        AuthModule,
+        RoleGroupModule,
+        AdminRouteModule,
+        UserModule,
+    ],
+    controllers: [RoleController],
+    providers: [...providers],
+    exports: [MongooseRepositoryModule, ...providers],
+})
+export class RoleModule {}
 ```
 
 ```ts

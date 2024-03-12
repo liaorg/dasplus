@@ -1,0 +1,49 @@
+{
+    "module": "网卡配置",
+    "maintainPort": "检修口",
+    "adminPort": "管理口",
+    "up": "启用网卡 {device}",
+    "down": "停用网卡 {device}",
+    "listen": "设置监听网卡 {device}",
+    "unlisten": "取消监听网卡 {device}",
+    "setIp": "配置网卡 {device}，修改后{content} ",
+    "delipv4": "删除网卡 {device} 的 IPV4 地址",
+    "delipv6": "删除网卡 {device} 的 IPV6 地址",
+    "delall": "删除网卡 {device} 的所有 IP",
+    "running": {
+        "yes": "连接",
+        "no": "断开"
+    },
+    "speed": {
+        "tenThousand": "万兆",
+        "hundred": "百兆",
+        "thousand": "千兆"
+    },
+    "electricPort": "电口",
+    "fibreOpticalPort": "光口",
+    "error": {
+        "notExisted": "网卡不存在",
+        "setIpFailed": "配置 IP 失败",
+        "deleteFailed": "删除 IP 失败",
+        "getFailed": "获取网卡列表失败",
+        "notAllowedSetMaintainPort": "默认检修口不允许设置 IP",
+        "mustOneAddress": "至少填写一组 IP 地址",
+        "notAllowDel": "默认管理口和检修口不允许删除 IP",
+        "notAllowedSetListenPort": "监听口不允许设置 IP",
+        "notAllowedListenPort": "不能监听管理口和检修口",
+        "listenFailed": "监听网卡失败",
+        "unListenFailed": "取消监听网卡失败",
+        "upFailed": "启用网卡失败",
+        "downFailed": "停用网卡失败",
+        "notAllowedListenIp": "不能监听有 IP 地址的网卡",
+        "isListened": "已经是监听状态"
+    },
+    "log": {
+        "ipv4address": "IPV4地址：{content}",
+        "ipv4netmask": "子网掩码：{content}",
+        "ipv4gateway": "IPV4默认网关：{content}",
+        "ipv6address": "IPV6地址：{content}",
+        "ipv6prefixlen": "前缀长度：{content}",
+        "ipv6gateway": "IPV6默认网关：{content}"
+    }
+}

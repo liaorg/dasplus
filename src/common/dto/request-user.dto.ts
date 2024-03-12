@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 /**
  * 角色组, 出厂固定为:
  * @value 1 systemAdmin 系统管理员
@@ -27,7 +29,7 @@ export class RequestUserDto {
     /**
      * 登录名
      */
-    name: string;
+    name?: string;
     /**
      * 角色id
      */
@@ -39,6 +41,7 @@ export class RequestUserDto {
     /**
      * 角色组类型
      */
+    @ApiProperty({ enum: RoleGroupTypeEnum })
     roleGroupType?: RoleGroupTypeEnum;
     /**
      * 是否默认角色用户

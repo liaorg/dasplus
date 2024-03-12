@@ -15,7 +15,7 @@ function genBaseProp(type: Type<any>) {
 export function ApiResult<TModel extends Type<any>>({
     type,
     isPage,
-    status,
+    status = HttpStatus.OK,
 }: {
     type?: TModel | TModel[];
     isPage?: boolean;
@@ -30,16 +30,14 @@ export function ApiResult<TModel extends Type<any>>({
                 properties: {
                     items: {
                         type: 'array',
-                        items: { $ref: getSchemaPath(type[0]) },
+                        list: { $ref: getSchemaPath(type[0]) },
                     },
                     meta: {
                         type: 'object',
                         properties: {
-                            itemCount: { type: 'number', default: 0 },
-                            totalItems: { type: 'number', default: 0 },
-                            itemsPerPage: { type: 'number', default: 0 },
-                            totalPages: { type: 'number', default: 0 },
-                            currentPage: { type: 'number', default: 0 },
+                            total: { type: 'number', default: 0 },
+                            pageSize: { type: 'number', default: 0 },
+                            current: { type: 'number', default: 0 },
                         },
                     },
                 },

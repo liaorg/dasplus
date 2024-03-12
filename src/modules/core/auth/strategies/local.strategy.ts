@@ -1,7 +1,9 @@
 import { AdapterRequest } from '@/common/adapters';
+import { AuthError } from '@/common/constants';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
+import { AuthException } from '../auth.exception';
 import { AuthService } from '../auth.service';
 import { AuthStrategy } from '../constants';
 
@@ -11,7 +13,6 @@ import { AuthStrategy } from '../constants';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, AuthStrategy.LOCAL) {
     constructor(private authService: AuthService) {
-        // private readonly systemConfigureService: SystemConfigureService, // private readonly lockerService: LockerService, // private readonly userService: UserService,
         super({
             passReqToCallback: true,
         });
@@ -22,8 +23,24 @@ export class LocalStrategy extends PassportStrategy(Strategy, AuthStrategy.LOCAL
      * 其它服务可由 @RequestUserDecorator() loginUser: RequestUserDto 调取
      */
     async validate(request: AdapterRequest, username: string, password: string) {
-        const user = await this.authService.validateLoginUser(request, username, password);
-        return user;
+        // 登录安全验证：验证码 双因子等
+        // 锁定客户端
+        const loginUser = await this.authService.validateLoginUser(request, username, password);
+        if (!loginUser) {
+            const error = {
+                ...AuthError.wrongUserOrPassword,
+                args: { times: 3 },
+            };
+            throw new AuthException(error);
+            // this.checkLeftTimes({
+            //     lockerOld,
+            //     lockedTime,
+            //     maxTimes,
+            //     ip: request.ip,
+            //     name,
+            // });
+        }
+        return loginUser;
         // TODO 查询验证多因子
         // const [loginSafety, lockerOld] = await Promise.all([
         //     // 获取登录安全配置

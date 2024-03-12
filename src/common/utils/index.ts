@@ -15,5 +15,6 @@ export * from './html';
 export * from './number';
 export * from './object-id';
 export * from './pdf';
+export * from './response';
 export * from './string';
 export * from './xml';

@@ -1,7 +1,7 @@
 import { AdapterRequest } from '@/common/adapters';
+import { AuthError } from '@/common/constants';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { AuthException } from '../auth.exception';
-import { AuthError } from '../constants';
 
 /**
  * 当前用户装饰器
