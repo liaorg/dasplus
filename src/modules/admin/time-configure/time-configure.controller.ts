@@ -2,10 +2,10 @@ import { ApiResult, ApiSecurityAuth } from '@/common/decorators';
 import { OperateLogEnum } from '@/common/enum';
 import { DecryptPasswordInterceptor } from '@/common/interceptors/decrypt-password.interceptor';
 import { hasChangeWith, sm4Encrypt, success, toNumber } from '@/common/utils';
-import { appConfig } from '@/config';
 import { ConfigTypeEnum } from '@/modules/core/system-configure/enum';
 import { SystemConfigureService } from '@/modules/core/system-configure/system-configure.service';
 import { Body, Controller, Get, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { AsyncTypeEnum, TimeConfigureDto, TimezoneEnum, UpdateTimeConfigureDto } from './dto';
@@ -22,6 +22,7 @@ export class TimeConfigureController {
     private logType = OperateLogEnum.systemAdmin;
     constructor(
         private readonly service: TimeConfigureService,
+        private configService: ConfigService,
         private readonly systemConfigureService: SystemConfigureService,
     ) {}
 
@@ -47,11 +48,8 @@ export class TimeConfigureController {
         }
         if (update.orclePassword) {
             // 加密存储密码
-            update.orclePassword = await sm4Encrypt(
-                update.orclePassword,
-                appConfig().sm4.key,
-                appConfig().sm4.iv,
-            );
+            const sm4Config = this.configService.get('appConfig.sm4');
+            update.orclePassword = await sm4Encrypt(update.orclePassword, sm4Config.key, sm4Config.iv);
         }
         const withKey = [
             'timezone',
@@ -66,7 +64,8 @@ export class TimeConfigureController {
         let change = [];
         let target: any = {};
         // 检查时间配置是否存在
-        const oldData = await this.systemConfigureService.findOne({ filter: { type: this.configType } });
+        const data = await this.systemConfigureService.getCacheData([this.configType]);
+        const oldData = { ...data[0] };
         if (oldData) {
             oldData.content.asyncType = toNumber(oldData.content.asyncType);
             // 把旧数据中的 null => undefined

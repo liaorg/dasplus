@@ -115,7 +115,7 @@ export class OperateLogController {
                 typeName: value.typeName,
                 operateDate: formatDateTime({
                     date: value.operateDate * 1000,
-                    ...timeOpt,
+                    timezone: timeOpt.timezone,
                 }),
                 content: value.content,
                 operator: value.operator,

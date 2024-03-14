@@ -5,12 +5,13 @@ https://docs.nestjs.com/guards#guards
 import { AdapterRequest } from '@/common/adapters';
 import { AuthError } from '@/common/constants';
 import { RequestUserDto } from '@/common/dto';
+import { getRoutePath } from '@/common/helps';
 import { UserService } from '@/modules/admin/user/user.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { AuthException } from '../auth.exception';
-import { ALLOW_GUEST, IS_CHECK_MENU, IS_PUBLIC_KEY } from '../constants';
+import { IS_CHECK_MENU, IS_PUBLIC_KEY } from '../constants';
 
 /**
  * RBAC 角色菜单权限守卫
@@ -38,15 +39,6 @@ export class RoleGuard implements CanActivate {
             context.getClass(),
         ]);
         if (isCheckMenu === false) return true;
-        // 以下主要用于开发阶段，上线后注释
-        const isDev = process.env.NODE_ENV === 'development';
-        if (isDev) {
-            const allowGuest = this.reflector.getAllAndOverride<boolean>(ALLOW_GUEST, [
-                context.getHandler(),
-                context.getClass(),
-            ]);
-            if (allowGuest) return true;
-        }
         // 检查请求中是否有登录字段
         return await this.validateRole(request);
     }
@@ -62,13 +54,13 @@ export class RoleGuard implements CanActivate {
             };
             throw new AuthException(error);
         }
-        // 通过 user role 查找菜单权限，对比 request.route.path 路由
+        // 通过 user role 查找菜单权限，对比 request 路由
         // 要去掉路由前缀
         const appConfig = this.configService.get('appConfig');
         const searchRegExp = new RegExp(
             `${appConfig.adminPrefix}|${appConfig.dataPrefix}|${appConfig.enginePrefix}`,
         );
-        const path = (request.route.path as string).replace(searchRegExp, '');
+        const path = getRoutePath(request).replace(searchRegExp, '');
         const method = request.method.toUpperCase();
         const userRoute = await this.userService.matchRoutePermission(user.roleId, path, method);
         if (!userRoute) {

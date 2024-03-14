@@ -4,8 +4,8 @@
 
 import { RequestValidationSchema } from '@/common/decorators';
 import { PaginationDto } from '@/common/dto';
-import { ObjectIdType } from '@/common/services';
 import { queryUserSchema } from '../schemas';
+import { ObjectIdType } from '@/common/services';
 
 /**
  * 注入验证 schema 对象

@@ -13,7 +13,7 @@ export class RefreshToken extends BaseToken {
     accessToken: ObjectIdType;
 
     // 修改时间, expires过期时间，以秒为单位 30天 = 86400 * 30 = 2592000
-    @Prop({ type: Date, default: Date.now, expires: 2592000 })
+    @Prop({ type: Date, default: () => Date.now(), expires: 2592000 })
     update_date?: Date;
 }
 

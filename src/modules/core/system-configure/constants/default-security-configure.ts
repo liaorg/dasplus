@@ -5,12 +5,14 @@ import {
     RemoteDebugDto,
     ServerPortDto,
 } from '@/modules/admin/security-configure/dto';
-import { AsyncTypeEnum, TimeConfigureDto, TimezoneEnum } from '@/modules/admin/time-configure/dto';
+import { AsyncTypeEnum, TimeConfigureDto } from '@/modules/admin/time-configure/dto';
+
+const configData = appConfig();
 
 // 默认时间配置
 export const defaultTimeConfigure: TimeConfigureDto = {
     // 时区设置
-    timezone: TimezoneEnum.china,
+    timezone: configData.timezone,
     // 同步方式 0不同步，1从网络同步，2从数据库同步
     asyncType: AsyncTypeEnum.unasync,
 };
@@ -117,7 +119,7 @@ export const defaultServerPort: ServerPortDto[] = [
     {
         name: 'SSH',
         protocol: 'tcp',
-        port: [{ value: appConfig().sshPort, status: true, allowChange: true }],
+        port: [{ value: configData.sshPort, status: true, allowChange: true }],
     },
 ];
 // 默认远程调试配置
@@ -129,5 +131,5 @@ export const defaultRemoteDebug: RemoteDebugDto = {
     /**
      * 远程调试端口
      */
-    port: [appConfig().sshPort, 9200, 9300, 12301, 12302, 12310],
+    port: [configData.sshPort, 9200, 9300, 12301, 12302, 12310],
 };

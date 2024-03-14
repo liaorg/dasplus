@@ -3,7 +3,7 @@ import { CreateOperateLogDto } from '@/modules/admin/operate-log/dto';
 import { OperateLogService } from '@/modules/admin/operate-log/operate-log.service';
 import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { getContextObject } from 'nestjs-i18n';
+import { I18nContext } from 'nestjs-i18n';
 import { Observable, map, tap } from 'rxjs';
 import { AdapterRequest, AdapterResponse } from '../adapters';
 import { CREATE_OPERATE_LOG } from '../decorators/operate-log.decorator';
@@ -45,7 +45,7 @@ export class OperateLoggerInterceptor implements NestInterceptor {
                     // 获取类或方法中的参数： CREATE_OPERATE_LOG
                     const contextLog = this.getContextDto(context);
                     if (contextLog) {
-                        this.createLog(contextLog, user, req.ip, res.statusCode);
+                        this.createLog(context, contextLog, user, req.ip, res.statusCode);
                     }
                 }),
             )
@@ -55,7 +55,7 @@ export class OperateLoggerInterceptor implements NestInterceptor {
                     if (isGeneralizedObject(data) && CREATE_OPERATE_LOG in data) {
                         if (data[CREATE_OPERATE_LOG]) {
                             const log = { ...data[CREATE_OPERATE_LOG] };
-                            this.createLog(log, user, req.ip, res.statusCode);
+                            this.createLog(context, log, user, req.ip, res.statusCode);
                         }
                         data[CREATE_OPERATE_LOG] = undefined;
                         return data.data;
@@ -73,14 +73,20 @@ export class OperateLoggerInterceptor implements NestInterceptor {
     }
 
     // 写入日志
-    private async createLog(contextLog: any, user: any, loginip: string, statusCode: number) {
+    private async createLog(
+        context: ExecutionContext,
+        contextLog: any,
+        user: any,
+        loginip: string,
+        statusCode: number,
+    ) {
         // 获取操作者信息 operatorId operator operatorIp
         // 获取操作时间 operateDate
         // 获取操作结果 status
         // 获取操作业务模块 module
         const operator = contextLog?.username ? contextLog.username : user?.name ?? 'system';
         const operatorIp = contextLog?.loginIp ? contextLog.loginIp : loginip;
-        const i18n = getContextObject(this.logService.context);
+        const i18n = I18nContext.current(context);
         // 翻译日志内容
         let content: any;
         // 是否有多语言参数

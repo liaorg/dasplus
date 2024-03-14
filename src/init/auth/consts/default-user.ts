@@ -12,7 +12,7 @@ const defaultAdmin = {
     systemAdmin: {
         _id: defaultUserOid.system,
         name: 'admin',
-        password: `Admin@${year}`,
+        password: `A_dmin@${year}`,
         business: { id: [], name: [] },
         role: defaultRoleOid.systemAdmin,
         order: 1,
@@ -20,7 +20,7 @@ const defaultAdmin = {
     securityAdmin: {
         _id: defaultUserOid.security,
         name: 'sec',
-        password: `Sec@${year}`,
+        password: `S_ec@${year}`,
         business: { id: [-1], name: [] },
         role: defaultRoleOid.securityAdmin,
         order: 2,
@@ -28,7 +28,7 @@ const defaultAdmin = {
     auditAdmin: {
         _id: defaultUserOid.audit,
         name: 'audit',
-        password: `Audit@${year}`,
+        password: `A_udit@${year}`,
         business: { id: [], name: [] },
         role: defaultRoleOid.auditAdmin,
         order: 3,

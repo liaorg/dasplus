@@ -36,17 +36,12 @@ export class SecurityConfigureService {
             remoteDebug: { ...defaultRemoteDebug },
         };
         try {
-            const filter = {
-                type: {
-                    $in: [
-                        ConfigTypeEnum.loginSafety,
-                        ConfigTypeEnum.passwordSafety,
-                        ConfigTypeEnum.serverPort,
-                        ConfigTypeEnum.remoteDebug,
-                    ],
-                },
-            };
-            const data = await this.systemConfigureService.find({ filter });
+            const data = await this.systemConfigureService.getCacheData([
+                ConfigTypeEnum.loginSafety,
+                ConfigTypeEnum.passwordSafety,
+                ConfigTypeEnum.serverPort,
+                ConfigTypeEnum.remoteDebug,
+            ]);
             if (!data?.length) {
                 const error = {
                     ...SystemConfigureError.getConfigureFailed,
@@ -87,8 +82,8 @@ export class SecurityConfigureService {
         }
         let change = [];
         // 检查安全配置是否存在
-        const oldData = await this.systemConfigureService.findOne({ filter: { type: configType } });
-        if (oldData) {
+        const oldData = await this.systemConfigureService.getCacheData([configType]);
+        if (oldData.length) {
             // 提取修改内容
             const withKey = [];
             let hasChange: any;
@@ -103,7 +98,7 @@ export class SecurityConfigureService {
                         'statusOfcaptcha',
                         'forceReset',
                     );
-                    hasChange = hasChangeWith(withKey, oldData.content, newUpdateData);
+                    hasChange = hasChangeWith(withKey, oldData[0].content, newUpdateData);
                     change = [...hasChange.change];
                     break;
                 case ConfigTypeEnum.passwordSafety:
@@ -117,12 +112,12 @@ export class SecurityConfigureService {
                         'weakCheck',
                         'excludeWord',
                     );
-                    hasChange = hasChangeWith(withKey, oldData.content, newUpdateData);
+                    hasChange = hasChangeWith(withKey, oldData[0].content, newUpdateData);
                     change = [...hasChange.change];
                     break;
                 case ConfigTypeEnum.remoteDebug:
                     withKey.push('status');
-                    hasChange = hasChangeWith(withKey, oldData.content, newUpdateData);
+                    hasChange = hasChangeWith(withKey, oldData[0].content, newUpdateData);
                     change = [...hasChange.change];
                     break;
                 default:
@@ -172,7 +167,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.loginSafety.log.numOfLoginFailedToLocked', {
                                 args: {
-                                    source: oldData.content.numOfLoginFailedToLocked,
+                                    source: oldData[0].content.numOfLoginFailedToLocked,
                                     target: newUpdateData.numOfLoginFailedToLocked,
                                 },
                             }),
@@ -183,7 +178,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.loginSafety.log.timeOfLoginFailedToLocked', {
                                 args: {
-                                    source: oldData.content.timeOfLoginFailedToLocked,
+                                    source: oldData[0].content.timeOfLoginFailedToLocked,
                                     target: newUpdateData.timeOfLoginFailedToLocked,
                                 },
                             }),
@@ -194,7 +189,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.loginSafety.log.timeOfLogout', {
                                 args: {
-                                    source: oldData.content.timeOfLogout,
+                                    source: oldData[0].content.timeOfLogout,
                                     target: newUpdateData.timeOfLogout,
                                 },
                             }),
@@ -205,7 +200,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.loginSafety.log.timeLimitOfPassword', {
                                 args: {
-                                    source: oldData.content.timeLimitOfPassword,
+                                    source: oldData[0].content.timeLimitOfPassword,
                                     target: newUpdateData.timeLimitOfPassword,
                                 },
                             }),
@@ -216,7 +211,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.loginSafety.log.timeOfMaintain', {
                                 args: {
-                                    source: oldData.content.timeOfMaintain,
+                                    source: oldData[0].content.timeOfMaintain,
                                     target: newUpdateData.timeOfMaintain,
                                 },
                             }),
@@ -257,7 +252,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.passwordSafety.log.minLength', {
                                 args: {
-                                    source: oldData.content.minLength,
+                                    source: oldData[0].content.minLength,
                                     target: newUpdateData.minLength,
                                 },
                             }),
@@ -268,7 +263,7 @@ export class SecurityConfigureService {
                         content.push(
                             i18n.t('configure.security.passwordSafety.log.maxSameLetter', {
                                 args: {
-                                    source: oldData.content.maxSameLetter,
+                                    source: oldData[0].content.maxSameLetter,
                                     target: newUpdateData.maxSameLetter,
                                 },
                             }),

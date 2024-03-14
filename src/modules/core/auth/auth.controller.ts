@@ -1,7 +1,9 @@
 import { OpenApiHeaderConfigure } from '@/common/constants';
 import { ApiResult } from '@/common/decorators';
 import { RequestUserDto } from '@/common/dto';
-import { Controller, Headers, Ip, Post, UseGuards } from '@nestjs/common';
+import { OperateLogEnum } from '@/common/enum';
+import { success } from '@/common/utils';
+import { Controller, Ip, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { PublicDecorator, RequestUserDecorator } from './decorators';
@@ -15,6 +17,8 @@ import { LocalAuthGuard } from './guards';
 // @Controller('admin/user')
 @Controller('auth')
 export class AuthController {
+    private logMoudle = 'user.module';
+    private logType = OperateLogEnum.systemAdmin;
     constructor(private readonly service: AuthService) {}
 
     /**
@@ -24,30 +28,25 @@ export class AuthController {
      */
     @ApiOperation({ summary: '登录' })
     @ApiBody({ type: LoginDto })
-    @ApiResult({ type: Object })
+    @ApiResult({ type: RequestUserDto })
     @Post('login')
     async login(
         @RequestUserDecorator() loginUser: RequestUserDto,
-        @Headers() headers: any,
         @Ip() ip: string,
-    ) {
-        // 登录
-        const ua = headers['user-agent'];
-        const token = await this.service.login(loginUser, ip, ua);
-        return { token };
-        // 生成 token
-        // const token = await this.service.createToken(user, ip);
-        // // 获取用户信息
-        // const userInfo = await this.service.findByUserId(user._id);
-        // const data = { token, ...userInfo.toObject() };
-        // // 日志
-        // const log = {
-        //     module: this.logMoudle,
-        //     type: OperateLogEnum.login,
-        //     content: 'user.login',
-        //     lanArgs: { name: user.name },
-        // };
-        // // 创建带操作日志信息的返回数据
-        // return success(data, log);
+        // @Headers() headers: any,
+    ): Promise<any> {
+        // const ua = headers['user-agent'];
+        // 验证登录
+        const token = await this.service.login(loginUser, ip);
+        const data = { token, ...loginUser };
+        // 日志
+        const log = {
+            module: this.logMoudle,
+            type: OperateLogEnum.login,
+            content: 'user.login',
+            lanArgs: { name: data.name },
+        };
+        // 创建带操作日志信息的返回数据
+        return success(data, log);
     }
 }

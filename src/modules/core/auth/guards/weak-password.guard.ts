@@ -4,6 +4,7 @@ https://docs.nestjs.com/guards#guards
 
 import { AdapterRequest } from '@/common/adapters';
 import { ApiError } from '@/common/constants';
+import { getRoutePath } from '@/common/helps';
 import { WEAK_PASSRORD, WEAK_PASSRORD_SM3 } from '@/config';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -27,7 +28,7 @@ export class WeakPasswordGuard implements CanActivate {
     // 验证请求
     async validateRequest(request: AdapterRequest): Promise<boolean> {
         // 用户密码操作
-        const userPasswordPath = [
+        const userPasswordRoutePath = [
             // 重置密码
             '/user/passwords',
             // 修改密码
@@ -44,11 +45,11 @@ export class WeakPasswordGuard implements CanActivate {
         const searchRegExp = new RegExp(
             `${appConfig.adminPrefix}|${appConfig.dataPrefix}|${appConfig.enginePrefix}`,
         );
-        const path = request['route'] ? request['route']['path'].replace(searchRegExp, '') : '';
+        const path = getRoutePath(request).replace(searchRegExp, '');
         const password = request?.body['password'] || '';
         let isWeakPassword = false;
         if (password) {
-            if (userPasswordPath.includes(path)) {
+            if (userPasswordRoutePath.includes(path)) {
                 // 用户密码操作的密码要比较 sm3 摘要
                 isWeakPassword = WEAK_PASSRORD_SM3.includes(password);
             } else {

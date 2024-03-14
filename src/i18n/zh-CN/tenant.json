@@ -1,0 +1,20 @@
+{
+    "module": "租户管理",
+    "add": "添加租户 {id}",
+    "modify": "修改租户 {id}",
+    "del": "删除租户 {id}",
+    "status": "设置租户 {id} 状态为 {status}",
+    "error": {
+        "notExisted": "租户 {id} 不存在",
+        "addFailed": "添加租户 {name} 失败",
+        "updateFailed": "修改租户 {name}  失败",
+        "deleteFailed": "删除租户 {id} 失败",
+        "existed": "租户 {id} 已存在"
+    },
+    "log": {
+        "status": "是否生效：{content}",
+        "description": "描述：{content}",
+        "statusTrue": "生效",
+        "statusFalse": "失效"
+    }
+}

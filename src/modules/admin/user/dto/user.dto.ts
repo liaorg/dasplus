@@ -2,7 +2,6 @@
  * import { PaginationListDto } from "@/common/dto";
  */
 import { PaginationListDto } from '@/common/dto';
-import { ObjectIdType } from '@/common/services';
 import { BusinessInterface } from '../schemas';
 /**
  * 用户信息
@@ -11,7 +10,7 @@ export class UserProfileDto {
     /**
      * 用户Id
      */
-    _id: ObjectIdType;
+    _id: string;
     /**
      * 用户名称
      */
@@ -19,11 +18,11 @@ export class UserProfileDto {
     /**
      * 角色Id
      */
-    role?: ObjectIdType;
+    role?: string;
     /**
      * 角色组Id
      */
-    roleGroup?: ObjectIdType;
+    roleGroup?: string;
     /**
      * 描述
      */

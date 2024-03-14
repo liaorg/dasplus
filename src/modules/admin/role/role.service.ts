@@ -29,7 +29,7 @@ import { UserService } from '../user/user.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleException } from './role.exception';
-import { Role, RoleDocument } from './schemas';
+import { Role } from './schemas';
 
 @Injectable()
 export class RoleService extends BaseService<Role> {
@@ -44,7 +44,7 @@ export class RoleService extends BaseService<Role> {
     }
 
     // 添加角色
-    async addRole(createRole: CreateRoleDto): Promise<RoleDocument> {
+    async addRole(createRole: CreateRoleDto) {
         const { name, roleGroupId, permissionIds, description } = createRole;
         // 获取额外的报表任务菜单，即不在菜单中显示的菜单权限
         const ids = await this.findReportTaskMenuPermission(permissionIds);
@@ -93,12 +93,6 @@ export class RoleService extends BaseService<Role> {
             }
             return added;
         });
-        if (!addedRole) {
-            const error = {
-                ...RoleError.addFailed,
-            };
-            throw new RoleException(error);
-        }
         return addedRole;
     }
 
@@ -527,7 +521,7 @@ export class RoleService extends BaseService<Role> {
         const param: any = {
             filter: {
                 status: 1,
-                permission: { $in: roleGroup?.permissions },
+                permission: { $in: roleGroup?.permissions || [] },
             },
         };
         const menu = await this.menuService.find(param);
@@ -542,7 +536,7 @@ export class RoleService extends BaseService<Role> {
         const param: any = {
             filter: {
                 status: 1,
-                permission: { $in: role?.permissions },
+                permission: { $in: role?.permissions || [] },
             },
         };
         const menu = await this.menuService.find(param);
@@ -556,7 +550,7 @@ export class RoleService extends BaseService<Role> {
         // 再获取角色组路由
         const param: any = {
             filter: {
-                permission: { $in: roleGroup?.permissions },
+                permission: { $in: roleGroup?.permissions || [] },
             },
         };
         const adminRoute = await this.adminRouteService.find(param);
@@ -570,7 +564,7 @@ export class RoleService extends BaseService<Role> {
         // 再获取角色路由权限
         const param: any = {
             filter: {
-                permission: { $in: role?.permissions },
+                permission: { $in: role?.permissions || [] },
             },
         };
         const adminRoute = await this.adminRouteService.find(param);

@@ -7,6 +7,7 @@ import { NetworkModule } from './network/network.module';
 import { OperateLogModule } from './operate-log/operate-log.module';
 import { RoleModule } from './role/role.module';
 import { SecurityConfigureModule } from './security-configure/security-configure.module';
+import { TenantModule } from './tenant/tenant.module';
 import { TimeConfigureModule } from './time-configure/time-configure.module';
 import { UserModule } from './user/user.module';
 
@@ -18,6 +19,7 @@ const modules = [
     OperateLogModule,
     RoleModule,
     SecurityConfigureModule,
+    TenantModule,
     TimeConfigureModule,
     UserModule,
 ];

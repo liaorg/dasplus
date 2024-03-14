@@ -154,7 +154,10 @@ export class OperateLogService extends BaseService<OperateLog> {
             list.forEach(async (value) => {
                 const log = {
                     logtype: value?.typeName,
-                    operateDate: formatDateTime({ date: value?.operateDate * 1000, ...timeOpt }),
+                    operateDate: formatDateTime({
+                        date: value?.operateDate * 1000,
+                        timezone: timeOpt.timezone,
+                    }),
                     content: value?.content,
                     operator: value?.operator,
                     operatorIp: value?.operatorIp,

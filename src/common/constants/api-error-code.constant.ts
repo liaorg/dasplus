@@ -312,3 +312,17 @@ export const UploadError = {
     // 请上传正确的文件，后缀名为
     extensionsError: { errorCode: 402106, langKeyword: 'upload.error.extensionsError' },
 };
+
+// 租户管理 402200+
+export const TenantError = {
+    // 租户不存在
+    notExisted: { errorCode: 402201, langKeyword: 'tenant.error.notExisted' },
+    // 添加租户失败
+    addFailed: { errorCode: 402202, langKeyword: 'tenant.error.addFailed' },
+    // 修改租户失败
+    updateFailed: { errorCode: 402203, langKeyword: 'tenant.error.updateFailed' },
+    // 删除租户失败
+    deleteFailed: { errorCode: 402204, langKeyword: 'tenant.error.deleteFailed' },
+    // 租户已存在
+    existed: { errorCode: 402205, langKeyword: 'tenant.error.existed' },
+};

@@ -4,6 +4,7 @@ import { RoleGroup } from '@/modules/core/role-group/schemas';
 import { IRelation } from '@/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { Tenant } from '../../tenant/schemas';
 import { User } from '../../user/schemas';
 
 export type RoleDocument = HydratedDocument<Role>;
@@ -13,7 +14,7 @@ export type RoleDocument = HydratedDocument<Role>;
 @Schema({ collection: 'roles', versionKey: false })
 export class Role extends CommonDescription {
     // 角色名
-    @Prop({ type: String, unique: true, required: true, index: true })
+    @Prop({ type: String, required: true, index: true })
     name: string;
 
     // 是否默认角色员：0-否|1-是，默认角色的权限(菜单和业务)不能修改
@@ -47,6 +48,10 @@ export class Role extends CommonDescription {
     // 排序
     @Prop({ type: Number, default: 999 })
     order?: number;
+
+    // 角色所属租户
+    @Prop({ type: Types.ObjectId, ref: 'Tenant' })
+    tenant?: IRelation<Tenant>;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

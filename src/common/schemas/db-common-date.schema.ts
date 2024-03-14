@@ -12,10 +12,14 @@ import { ObjectIdType } from '../interfaces';
 export abstract class CommonDate {
     @Prop({ type: Types.ObjectId })
     _id?: ObjectIdType;
-    // 创建时间UTC毫秒
+    /**
+     * 创建时间UTC毫秒
+     */
     @Prop({ type: Number, default: () => Date.now() })
     create_date?: number;
-    // 修改时间UTC毫秒
+    /**
+     * 修改时间UTC毫秒
+     */
     @Prop({ type: Number, default: () => Date.now() })
     update_date?: number;
 }

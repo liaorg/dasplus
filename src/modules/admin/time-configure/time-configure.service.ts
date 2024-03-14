@@ -1,19 +1,18 @@
 import { SystemConfigureError } from '@/common/constants';
 import { emptyCallback, execSh, formatDateTime, sm4Decrypt } from '@/common/utils';
-import { appConfig } from '@/config';
-import { defaultTimeConfigure } from '@/modules/core/system-configure/constants';
-import { ConfigTypeEnum } from '@/modules/core/system-configure/enum';
 import { SystemConfigureException } from '@/modules/core/system-configure/system-configure.exception';
 import { SystemConfigureService } from '@/modules/core/system-configure/system-configure.service';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Connection, getConnection } from 'oracledb';
 import { TimeConfigureDto, TimezoneEnum } from './dto';
 
 @Injectable()
 export class TimeConfigureService {
-    // 配置类型为 1 时间类型
-    private configType = ConfigTypeEnum.time;
-    constructor(private readonly systemConfigureService: SystemConfigureService) {}
+    constructor(
+        private configService: ConfigService,
+        private readonly systemConfigureService: SystemConfigureService,
+    ) {}
     // 根据同步方式更新时间
     async syncDateTime(oldData: TimeConfigureDto, dateTime: string) {
         if (oldData.asyncType === 1) {
@@ -48,14 +47,11 @@ export class TimeConfigureService {
             // 从数据库同步
             let connection: Connection;
             try {
+                const sm4Config = this.configService.get('appConfig.sm4');
                 connection = await getConnection({
                     user: oldData.orcleUsername,
                     // 解密存储密码
-                    password: await sm4Decrypt(
-                        oldData.orclePassword,
-                        appConfig().sm4.key,
-                        appConfig().sm4.iv,
-                    ),
+                    password: await sm4Decrypt(oldData.orclePassword, sm4Config.key, sm4Config.iv),
                     connectionString: `${oldData.orcleIp}:${oldData.orclePort}/${oldData.orcleInstanceName}`,
                 });
                 const sql = "SELECT TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL";
@@ -101,15 +97,10 @@ export class TimeConfigureService {
     }
     // 获取时间配置信息
     async getTimeConfigure(): Promise<TimeConfigureDto> {
-        const data = await this.systemConfigureService.findOne({ filter: { type: this.configType } });
+        const data = await this.systemConfigureService.getTimeConfig();
         // 服务器当前时间
-        if (data?.content) {
-            data.content.dateTime = this.getNow(data.content.timezone);
-            return data.content;
-        } else {
-            const dateTime = this.getNow(defaultTimeConfigure.timezone);
-            return { ...defaultTimeConfigure, dateTime };
-        }
+        const dateTime = this.getNow(data.timezone);
+        return { ...data, dateTime };
     }
     // 获取服务器当前时间
     getNow(timezone: string) {

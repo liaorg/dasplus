@@ -151,11 +151,11 @@ export class SecurityConfigureController {
         const content = [];
         let isNew = true;
         // 检查安全配置是否存在
-        const oldData = await this.systemConfigureService.findOne({ filter: { type: configType } });
-        if (oldData) {
+        const oldData = await this.systemConfigureService.getCacheData([configType]);
+        if (oldData.length) {
             isNew = false;
             // 提取修改内容
-            (oldData?.content as any[]).forEach((item) => {
+            (oldData[0].content as any[]).forEach((item) => {
                 if (item.name === update.name) {
                     hasName = true;
                     (item.port as PortStatusDto[]).forEach((p, index) => {

@@ -1,7 +1,9 @@
 import { CommonDescription } from '@/common/schemas';
-import { ObjectIdType } from '@/common/services';
+import { IRelation } from '@/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongoSchema, Types } from 'mongoose';
+import { Role } from '../../role/schemas';
+import { Tenant } from '../../tenant/schemas';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -80,11 +82,15 @@ export class User extends CommonDescription {
 
     // 用户角色id，一个用户只能对应一个角色
     @Prop({ type: Types.ObjectId, ref: 'Role' })
-    role?: ObjectIdType;
+    role?: IRelation<Role>;
 
     // 排序
     @Prop({ type: Number, default: 999 })
     order?: number;
+
+    // 角色所属租户
+    @Prop({ type: Types.ObjectId, ref: 'Tenant' })
+    tenant?: IRelation<Tenant>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -2,10 +2,11 @@ import { AdminHostError } from '@/common/constants';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
 import { catchAwait, execSh, isEmpty, writeFile } from '@/common/utils';
-import { CONF_PATH, appConfig } from '@/config';
+import { CONF_PATH } from '@/config';
 import { defaultTcpPort } from '@/modules/core/system-configure/constants';
 import { SystemConfigureService } from '@/modules/core/system-configure/system-configure.service';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AnyObject } from 'mongoose';
 import { IpTypeEnum } from '../network/enums';
 import { AdminHostException } from './admin-host.exception';
@@ -20,6 +21,7 @@ export class AdminHostService extends BaseService<AdminHost> {
         @InjectMongooseRepository(AdminHost.name)
         protected readonly repository: MongooseRepository<AdminHost>,
         private readonly systemConfigureService: SystemConfigureService,
+        private configService: ConfigService,
     ) {
         super(repository);
         // 如果是 docker 容器里
@@ -189,7 +191,8 @@ export class AdminHostService extends BaseService<AdminHost> {
         let tcpPort = serverPortAndRemoteDebugData.serverPort.tcpPort;
         if (!!remoteDebug === false) {
             // 远程调试关闭时，要去除 ssh 端口
-            tcpPort = tcpPort.filter((item) => item !== appConfig().sshPort);
+            const sshPort = this.configService.get('appConfig.sshPort');
+            tcpPort = tcpPort.filter((item) => item !== sshPort);
         }
         if (!tcpPort?.length) {
             tcpPort = defaultTcpPort;

@@ -1,4 +1,5 @@
 // 用户认证 JWT 策略
+import { user2requestUser } from '@/common/utils';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
@@ -28,10 +29,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, AuthStrategy.JWT) {
      * 其它服务可由 @RequestUserDecorator() loginUser: RequestUserDto 调取
      */
     async validate(payload: TokenPayloadDto) {
-        const user = await this.authService.validateJwtUser(payload);
+        const data = await this.authService.validateJwtUser(payload);
+        const user = user2requestUser(data);
         return user;
-        // const loginUser = await this.userService.findUserInfo(payload.sub);
-        // // 这边的返回将写入 @RequestUserDecorator() loginUser: RequestUserDto
-        // const user = user2requestUser(loginUser);
     }
 }

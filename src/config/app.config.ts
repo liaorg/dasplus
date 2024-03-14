@@ -1,3 +1,4 @@
+import { TimezoneEnum } from '@/modules/admin/time-configure/dto';
 import { registerAs } from '@nestjs/config';
 import { join, resolve } from 'node:path';
 
@@ -31,7 +32,7 @@ export const appConfig = registerAs('appConfig', () => ({
     },
     // 默认显示时的时区
     // 写入时建议不设置时区，即保持UTC0时区，时间统一在应用读取时转换
-    timezone: 'Asia/Shanghai',
+    timezone: TimezoneEnum.china,
     timeFormat: 'YYYY-MM-DD HH:mm:ss',
     // 默认语言
     locale: 'zh-cn',

@@ -39,9 +39,10 @@ export class LockerGuard implements CanActivate {
         const filter = {
             address: request.ip,
             status: 1,
-            times: { $gte: maxLoginFailed },
+            times: maxLoginFailed,
         };
-        const locker = await this.lockerService.findOne({ filter });
+        const data = await this.lockerService.getCacheDataByFilter(filter);
+        const locker = data[0];
         if (locker) {
             // 剩余登录失败次数
             // const leftTimes = (locker?.times || 0) - maxLoginFailed - 1;

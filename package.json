@@ -75,6 +75,7 @@
         "@types/line-reader": "^0.0.37",
         "@types/minimist": "^1.2.5",
         "@types/node": "^20.11.16",
+        "@types/oracledb": "^6.2.3",
         "@types/passport-jwt": "^4.0.1",
         "@types/passport-local": "^1.0.38",
         "@types/supertest": "^6.0.2",

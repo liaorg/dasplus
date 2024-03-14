@@ -3,7 +3,7 @@
     "add": "添加管理主机 {address}",
     "modify": "修改管理主机 {address}，修改后{content}",
     "del": "删除管理主机 {address}",
-    "status": "设置管理主机 {address} 状态为{status}",
+    "status": "设置管理主机 {address} 状态为 {status}",
     "error": {
         "notExisted": "管理主机 {id} 不存在",
         "addFailed": "添加管理主机 {address} 失败",

@@ -25,8 +25,6 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
     constructor(
         private reflector: Reflector,
         private readonly tokenService: TokenService,
-        // private authService: AuthService,
-        // private readonly systemConfigureService: SystemConfigureService,
     ) {
         super();
     }

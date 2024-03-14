@@ -52,6 +52,7 @@ export function user2requestUser(user: any): RequestUserDto {
         isDefaultRole: !!user.role.isDefault,
         roleGroupId: user.role.roleGroup._id,
         roleGroupType: user.role.roleGroup.type,
+        tenantId: user.tenant_id || 0,
     };
 }
 

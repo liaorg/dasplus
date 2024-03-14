@@ -163,6 +163,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.11.16
     version: 20.11.16
+  '@types/oracledb':
+    specifier: ^6.2.3
+    version: 6.2.3
   '@types/passport-jwt':
     specifier: ^4.0.1
     version: 4.0.1
@@ -1860,6 +1863,12 @@ packages:
     resolution: {integrity: sha512-gKb0enTmRCzXSSUJDq6/sPcqrfCv2mkkG6Jt/clpn5eiCbKTY+SgZUxo+p8ZKMof5dCp9vHQUAB7wOUTod22wQ==}
     dependencies:
       undici-types: 5.26.5
+
+  /@types/oracledb@6.2.3:
+    resolution: {integrity: sha512-oeDX7HKJP/f5VHs9osgrJ/4u3zBsdDUcjDI+dpMnyyPqfC7RFCC73AKqwqXaiOFJ8OyWbMk+Vobjr9Sswb7axQ==}
+    dependencies:
+      '@types/node': 20.11.16
+    dev: true
 
   /@types/passport-jwt@4.0.1:
     resolution: {integrity: sha512-Y0Ykz6nWP4jpxgEUYq8NoVZeCQPo1ZndJLfapI249g1jHChvRfZRO/LS3tqu26YgAS/laI1qx98sYGz0IalRXQ==}

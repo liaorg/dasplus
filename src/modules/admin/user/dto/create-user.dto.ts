@@ -1,9 +1,9 @@
 // 请求输入输出规范
 
 import { RequestValidationSchema } from '@/common/decorators';
+import { createUserSchema } from '../schemas';
 import { UserBusinessInterface } from '@/common/interfaces/user-business.interface';
 import { ObjectIdType } from '@/common/services';
-import { createUserSchema } from '../schemas';
 
 // 注入验证 schema 对象
 @RequestValidationSchema(createUserSchema)

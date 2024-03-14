@@ -11,6 +11,7 @@ declare module '@/common/adapters' {
         user?: RequestUserDto;
         route?: any;
         body?: any;
+        routeOptions?: any;
     }
 }
 

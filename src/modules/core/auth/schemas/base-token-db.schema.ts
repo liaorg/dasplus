@@ -15,6 +15,6 @@ export abstract class BaseToken {
     expiredAt: number;
 
     // 创建时间
-    @Prop({ type: Number, default: Date.now })
+    @Prop({ type: Number, default: () => Date.now() })
     create_date?: number;
 }

@@ -1,8 +1,8 @@
 // 请求输入输出规范
 
 import { RequestValidationSchema } from '@/common/decorators';
-import { ObjectIdType } from '@/common/services';
 import { deleteUserSchema } from '../schemas';
+import { ObjectIdType } from '@/common/services';
 
 // 注入验证 schema 对象
 @RequestValidationSchema(deleteUserSchema)

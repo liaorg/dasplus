@@ -1,7 +1,5 @@
 import { registerAs } from '@nestjs/config';
 import { MongooseModuleOptions } from '@nestjs/mongoose';
-import { set } from 'mongoose';
-import { isDev } from './env.config';
 
 // 连接属性
 interface MongodbConnectInterface {
@@ -14,7 +12,7 @@ interface MongodbConnectInterface {
 
 // set('id', true);
 // 开发阶段启用查询分析器记录查询语句
-isDev && set('debug', true);
+// isDev && set('debug', true);
 
 // https://mongoosejs.com/docs/guide.html
 // https://docs.nestjs.com/techniques/mongodb

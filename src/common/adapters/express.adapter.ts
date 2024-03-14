@@ -1,9 +1,11 @@
 /**
  * 框架环境适配器 express
+ * @exports adapterName
  * @exports AdapterApplication
  * @exports AdapterRequest
  * @exports AdapterResponse
  * @exports adapter
+ * @exports adapterOptions
  * @exports adapterMiddleware
  */
 
@@ -14,6 +16,7 @@
 // import rateLimit from 'express-rate-limit';
 // import helmet from 'helmet';
 
+// export const adapterName = 'ExpressApplication';
 // export {
 //     NestExpressApplication as AdapterApplication,
 //     Request as AdapterRequest,

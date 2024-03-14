@@ -1,8 +1,9 @@
 import { SystemConfigureError } from '@/common/constants';
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
-import { appConfig } from '@/config';
 import { ServerPortDto } from '@/modules/admin/security-configure/dto';
+import { IDocument } from '@/types';
 import { Injectable } from '@nestjs/common';
 import {
     defaultLoginSafety,
@@ -10,6 +11,7 @@ import {
     defaultRemoteDebug,
     defaultTcpPort,
 } from './constants';
+import { defaultTimeConfigure } from './constants/default-security-configure';
 import { CreateSystemConfigureDto, UpdateeSystemConfigureDto } from './dto';
 import { ConfigTypeEnum } from './enum';
 import { SystemConfigure, SystemConfigureDocument } from './schemas';
@@ -17,11 +19,27 @@ import { SystemConfigureException } from './system-configure.exception';
 
 @Injectable()
 export class SystemConfigureService extends BaseService<SystemConfigure> {
+    private cacheKey: string = genCacheKey('SystemConfigure');
     constructor(
         @InjectMongooseRepository(SystemConfigure.name)
         protected readonly repository: MongooseRepository<SystemConfigure>,
     ) {
         super(repository);
+        // 缓存配置
+        this.updateCache();
+    }
+
+    // 更新缓存配置
+    private async updateCache() {
+        this.find().then(async (data) => {
+            await this.setCache(this.cacheKey, [...data], 0);
+        });
+    }
+
+    // 获取缓存
+    async getCacheData(type?: ConfigTypeEnum[]) {
+        const data = (await this.getCache<IDocument<SystemConfigure>[]>(this.cacheKey)) || [];
+        return type.length ? data.filter((item) => type.includes(item.type)) : data;
     }
 
     /**
@@ -31,7 +49,10 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
      */
     async create(create: CreateSystemConfigureDto): Promise<SystemConfigureDocument> {
         // 添加
-        return await this.insert({ doc: create });
+        const data = await this.insert({ doc: create });
+        // 更新缓存配置
+        await this.updateCache();
+        return data;
     }
 
     /**
@@ -51,6 +72,8 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
         };
         const updated = await this.updateOne({ filter, doc: newData });
         if (updated.acknowledged) {
+            // 更新缓存配置
+            await this.updateCache();
             return true;
         }
         // 失败返回 false
@@ -73,12 +96,10 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
             remoteDebug: { ...defaultRemoteDebug },
         };
         try {
-            const filter = {
-                type: {
-                    $in: [ConfigTypeEnum.serverPort, ConfigTypeEnum.remoteDebug],
-                },
-            };
-            const data = await this.find({ filter });
+            const data = await this.getCacheData([
+                ConfigTypeEnum.serverPort,
+                ConfigTypeEnum.remoteDebug,
+            ]);
             if (data?.length) {
                 data.forEach((value) => {
                     if (value.type === ConfigTypeEnum.serverPort) {
@@ -116,10 +137,16 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
      * @returns
      */
     async getTimeConfig() {
-        const config = { tiemzone: appConfig().timezone };
+        const config = { ...defaultTimeConfigure };
         try {
-            const data = await this.findOne({ filter: { type: ConfigTypeEnum.time } });
-            config.tiemzone = data?.content?.timezone;
+            const data = await this.getCacheData([ConfigTypeEnum.time]);
+            if (data?.length) {
+                data.forEach((value) => {
+                    if (value.type === ConfigTypeEnum.time) {
+                        Object.assign(config, value.content);
+                    }
+                });
+            }
         } catch (error) {
             //
         }
@@ -134,9 +161,8 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
         const config = {
             ...defaultLoginSafety,
         };
-        const filter = { type: ConfigTypeEnum.loginSafety };
         try {
-            const data = await this.find({ filter });
+            const data = await this.getCacheData([ConfigTypeEnum.loginSafety]);
             if (data?.length) {
                 data.forEach((value) => {
                     if (value.type === ConfigTypeEnum.loginSafety) {
@@ -158,8 +184,7 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
             ...defaultPasswordSafety,
         };
         try {
-            const filter = { type: ConfigTypeEnum.passwordSafety };
-            const data = await this.find({ filter });
+            const data = await this.getCacheData([ConfigTypeEnum.passwordSafety]);
             if (data?.length) {
                 data.forEach((value) => {
                     if (value.type === ConfigTypeEnum.passwordSafety) {

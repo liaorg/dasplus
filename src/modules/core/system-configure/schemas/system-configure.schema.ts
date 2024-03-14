@@ -13,7 +13,7 @@ export type SystemConfigureDocument = HydratedDocument<SystemConfigure>;
 @Schema({ collection: 'system_configures', versionKey: false })
 export class SystemConfigure {
     // 配置类型
-    @Prop({ required: true, index: true, unique: true })
+    @Prop({ type: String, required: true, index: true, unique: true })
     type: ConfigTypeEnum;
 
     // 配置信息，json 字符串
@@ -21,7 +21,7 @@ export class SystemConfigure {
     content: any;
 
     // 修改时间UTC毫秒
-    @Prop({ default: () => Date.now() })
+    @Prop({ type: Number, default: () => Date.now() })
     update_date?: number;
 }
 

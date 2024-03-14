@@ -1,10 +1,12 @@
 import { isDev } from '@/config';
+import { LockerModule } from '@/modules/admin/locker/locker.module';
 import { UserModule } from '@/modules/admin/user/user.module';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { SystemConfigureModule } from '../system-configure/system-configure.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessToken, AccessTokenSchema, RefreshToken, RefreshTokenSchema } from './schemas';
@@ -36,7 +38,9 @@ const strategies = [LocalStrategy, JwtStrategy];
             },
             inject: [ConfigService],
         }),
-        UserModule,
+        forwardRef(() => UserModule),
+        SystemConfigureModule,
+        LockerModule,
     ],
     controllers: [AuthController],
     providers: [...strategies, ...providers],

@@ -39,7 +39,6 @@ export class LockerController {
             } else {
                 temp.left_time = 0;
             }
-
             return temp;
         });
         return { list, current, pageSize, total };

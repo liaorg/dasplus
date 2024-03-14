@@ -1,6 +1,6 @@
 import { RequestValidationSchema } from '@/common/decorators';
-import { UserBusinessInterface } from '@/common/interfaces/user-business.interface';
 import { updateProfileSchema } from '../schemas';
+import { UserBusinessInterface } from '@/common/interfaces/user-business.interface';
 
 @RequestValidationSchema(updateProfileSchema)
 export class UpdateProfileDto {

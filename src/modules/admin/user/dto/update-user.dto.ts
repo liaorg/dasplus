@@ -1,7 +1,7 @@
 import { RequestValidationSchema } from '@/common/decorators';
+import { updateUserSchema } from '../schemas';
 import { UserBusinessInterface } from '@/common/interfaces/user-business.interface';
 import { ObjectIdType } from '@/common/services';
-import { updateUserSchema } from '../schemas';
 
 @RequestValidationSchema(updateUserSchema)
 export class UpdateUserDto {

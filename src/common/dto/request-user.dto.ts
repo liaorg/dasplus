@@ -65,4 +65,9 @@ export class RequestUserDto {
      * 业务系统，json.name
      */
     businessName?: string[];
+    /**
+     * 所属租户
+     */
+    tenantId?: number;
+    token?: string;
 }

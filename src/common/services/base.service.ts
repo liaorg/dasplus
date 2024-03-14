@@ -1,3 +1,6 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject } from '@nestjs/common';
+import { Cache, Milliseconds } from 'cache-manager';
 import { DeleteResult } from 'mongodb';
 import {
     ClientSession,
@@ -14,11 +17,22 @@ import { ApiErrorInterface, ObjectIdType } from '../interfaces';
 import { MongooseRepository } from '../repository';
 
 export abstract class BaseService<TM> {
+    @Inject(CACHE_MANAGER) private cacheManager: Cache;
     constructor(protected repository: MongooseRepository<TM>) {}
 
     // 获取模型
     getModel() {
         return this.repository.getModel();
+    }
+
+    // 设置缓存
+    async setCache(key: string, value: any, ttl?: Milliseconds) {
+        return await this.cacheManager.set(key, value, ttl);
+    }
+
+    // 获取缓存
+    async getCache<T = any>(key: string) {
+        return await this.cacheManager.get<T>(key);
     }
 
     /**

@@ -273,7 +273,7 @@ import { OperateLogEnum } from '@/common/enum';
 // token 参数设置
 @ApiSecurityAuth()
 // -- swagger 设置 --end
-@Controller(`${appConfig.adminPrefix}role`)
+@Controller('role')
 export class RoleController {
     private logMoudle = 'role.module';
     private logType = OperateLogEnum.systemAdmin;
@@ -607,4 +607,22 @@ link.click();
 ```sh
 # https://github.com/NaturalIntelligence/fast-xml-parser
 npm install fast-xml-parser
+```
+
+# Promise.all & Array.map
+
+```ts
+const [err, rep] = await catchAwait(
+    Promise.all(
+        ['a', 'b'].map(async (v) => {
+            if (v === 'a') {
+                // 这边的返回值会写入 catchAwait 中的 err
+                // throw 'error'
+                return Promise.reject('error');
+            }
+            // 这边的返回值会写入 catchAwait 中的 rep
+            return true;
+        }),
+    ),
+);
 ```

@@ -36,7 +36,7 @@ export class AdminHostController {
     @ApiOperation({ summary: '管理主机分页-查询' })
     @ApiResult({ type: AdminHostListDto, isPage: true })
     @Post('query')
-    async findAll(@Body() query: QueryAdminHostDto): Promise<AdminHostListDto> {
+    async findAll(@Body() query: QueryAdminHostDto) {
         const { current, pageSize, sort } = query;
         const filter = this.service.createQueryWhere(query);
         const [list, total] = await this.service.findPagination({ filter, sort, current, pageSize });

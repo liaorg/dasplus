@@ -20,7 +20,7 @@ export class AccessToken extends BaseToken {
     role: ObjectIdType;
 
     // 修改时间, expires过期时间，以秒为单位 30分钟 = 60 * 10 = 600
-    @Prop({ type: Date, default: Date.now, expires: 600 })
+    @Prop({ type: Date, default: () => Date.now(), expires: 600 })
     update_date?: Date;
 }
 
