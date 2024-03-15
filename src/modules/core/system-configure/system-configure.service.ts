@@ -3,7 +3,6 @@ import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
 import { ServerPortDto } from '@/modules/admin/security-configure/dto';
-import { IDocument } from '@/types';
 import { Injectable } from '@nestjs/common';
 import {
     defaultLoginSafety,
@@ -19,26 +18,19 @@ import { SystemConfigureException } from './system-configure.exception';
 
 @Injectable()
 export class SystemConfigureService extends BaseService<SystemConfigure> {
-    private cacheKey: string = genCacheKey('SystemConfigure');
     constructor(
         @InjectMongooseRepository(SystemConfigure.name)
         protected readonly repository: MongooseRepository<SystemConfigure>,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('SystemConfigure');
+        super(repository, cacheKey);
         // 缓存配置
-        this.updateCache();
-    }
-
-    // 更新缓存配置
-    private async updateCache() {
-        this.find().then(async (data) => {
-            await this.setCache(this.cacheKey, [...data], 0);
-        });
+        this.initCache();
     }
 
     // 获取缓存
     async getCacheData(type?: ConfigTypeEnum[]) {
-        const data = (await this.getCache<IDocument<SystemConfigure>[]>(this.cacheKey)) || [];
+        const data = await this.getCache();
         return type.length ? data.filter((item) => type.includes(item.type)) : data;
     }
 
@@ -51,7 +43,7 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
         // 添加
         const data = await this.insert({ doc: create });
         // 更新缓存配置
-        await this.updateCache();
+        await this.initCache();
         return data;
     }
 
@@ -73,7 +65,7 @@ export class SystemConfigureService extends BaseService<SystemConfigure> {
         const updated = await this.updateOne({ filter, doc: newData });
         if (updated.acknowledged) {
             // 更新缓存配置
-            await this.updateCache();
+            await this.initCache();
             return true;
         }
         // 失败返回 false

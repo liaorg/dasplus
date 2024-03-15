@@ -18,6 +18,7 @@ import { RoleGroupTypeEnum } from '@/modules/core/role-group/enums';
 import { RoleGroupException } from '@/modules/core/role-group/role-group.exception';
 import { RoleGroupService } from '@/modules/core/role-group/role-group.service';
 import { RoleGroup } from '@/modules/core/role-group/schemas';
+import type { WrapperType } from '@/types';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientSession } from 'mongoose';
 import { I18nContext } from 'nestjs-i18n';
@@ -35,10 +36,10 @@ import { Role } from './schemas';
 export class RoleService extends BaseService<Role> {
     constructor(
         @InjectMongooseRepository(Role.name) protected readonly repository: MongooseRepository<Role>,
-        @Inject(forwardRef(() => MenuService)) private readonly menuService: MenuService,
+        @Inject(forwardRef(() => MenuService)) private readonly menuService: WrapperType<MenuService>,
+        @Inject(forwardRef(() => UserService)) private readonly userService: WrapperType<UserService>,
         private readonly roleGroupService: RoleGroupService,
         private readonly adminRouteService: AdminRouteService,
-        private readonly userService: UserService,
     ) {
         super(repository);
     }

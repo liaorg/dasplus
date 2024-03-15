@@ -22,7 +22,7 @@
             {
                 "name": "@nestjs/swagger",
                 "options": {
-                    "dtoFileNameSuffix": [".dto.ts", ".enum.ts", ".interface.ts", ".schema.ts"],
+                    "dtoFileNameSuffix": [".dto.ts", ".enum.ts", ".interface.ts", ".schema.ts", ".d.ts"],
                     "classValidatorShim": false,
                     "introspectComments": true,
                     "controllerKeyOfComment": "summary",

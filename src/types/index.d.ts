@@ -28,4 +28,4 @@ declare type IRelation<T = any> = ObjectIdType | (T & { _id: Types.ObjectId });
 /**
  * 防止SWC下循环依赖报错
  */
-declare type WrapperType<T> = T; // WrapperType === Relation
+declare type WrapperType<T> = T;

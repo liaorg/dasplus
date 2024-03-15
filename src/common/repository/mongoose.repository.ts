@@ -19,7 +19,7 @@ import {
 import { ApiError } from '../constants/api-error-code.constant';
 import { MongodbException } from '../exceptions/mongodb.exception';
 import { ApiErrorInterface } from '../interfaces';
-import { filterUndefined } from '../utils';
+import { filterTransform, toObjectId } from '../utils';
 
 // https://mongoosejs.com/docs/index.html
 // https://docs.nestjs.com/techniques/mongodb
@@ -103,7 +103,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { projection, options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.find(filter, projection, options).lean();
             if (objectError && !data?.length) {
                 throw objectError;
@@ -131,7 +131,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { projection, options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.findOne(filter, projection, options).lean();
             if (objectError && data === null) {
                 throw objectError;
@@ -156,7 +156,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { projection, options } = param;
-            const data = await this.model.findById(id, projection, options).lean();
+            const data = await this.model.findById(toObjectId(id), projection, options).lean();
             if (objectError && data === null) {
                 throw objectError;
             }
@@ -180,7 +180,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { doc, options } = param;
-            const data = await this.model.findByIdAndUpdate(id, doc, options).lean();
+            const data = await this.model.findByIdAndUpdate(toObjectId(id), doc, options).lean();
             if (objectError && data === null) {
                 throw objectError;
             }
@@ -207,7 +207,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { doc, options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.findOneAndUpdate(filter, doc, options).lean();
             if (objectError && data === null) {
                 throw objectError;
@@ -234,7 +234,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.findOneAndDelete(filter, options).lean();
             if (objectError && data === null) {
                 throw objectError;
@@ -262,7 +262,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { doc, options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.updateOne(filter, doc, options);
             if (objectError && !data?.acknowledged) {
                 throw objectError;
@@ -290,7 +290,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { doc, options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.updateMany(filter, doc, options);
             if (objectError && !data?.acknowledged) {
                 throw objectError;
@@ -315,7 +315,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ): Promise<DeleteResult> {
         try {
             const { options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.deleteOne(filter, options);
             if (objectError && !data?.acknowledged) {
                 throw objectError;
@@ -340,7 +340,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ): Promise<DeleteResult> {
         try {
             const { options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.deleteMany(filter, options);
             if (objectError && !data?.acknowledged) {
                 throw objectError;
@@ -363,7 +363,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
         objectError?: ApiErrorInterface,
     ) {
         try {
-            const data = await this.model.findByIdAndDelete(id, options).lean();
+            const data = await this.model.findByIdAndDelete(toObjectId(id), options).lean();
             if (objectError && data === null) {
                 throw objectError;
             }
@@ -390,7 +390,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { current, pageSize, sort = { _id: -1 }, projection } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             // 获取分页参数
             const { limit, skip } = this.createLimitAndSkip(current, pageSize);
             // 返回字段 projection
@@ -424,7 +424,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { options } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.countDocuments(filter, options);
             if (objectError && data === null) {
                 throw objectError;
@@ -444,7 +444,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
      */
     async exists(param: { filter: FilterQuery<TM> }, objectError?: ApiErrorInterface) {
         try {
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             const data = await this.model.exists(filter);
             if (objectError && data === null) {
                 throw objectError;
@@ -519,7 +519,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { projection, options, populateOptions } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             return await this.model
                 .findOne(filter, projection, options)
                 .populate(populateOptions)
@@ -546,7 +546,7 @@ export class MongooseRepository<TM = any, TD = HydratedDocument<TM>> {
     ) {
         try {
             const { projection, options, populateOptions } = param;
-            const filter = filterUndefined(param?.filter);
+            const filter = filterTransform(param?.filter);
             return await this.model.find(filter, projection, options).populate(populateOptions).lean();
         } catch (error: any) {
             this.handleRep(error, { param });

@@ -1,4 +1,5 @@
 import { AdapterRequest, adapterName } from '@/common/adapters';
+import { caching } from 'cache-manager';
 import { ClientRequest, ServerResponse } from 'node:http';
 import { OpenApiResponseDto } from './dto';
 
@@ -39,7 +40,7 @@ export function genAuthTokenKey(val: string | number) {
  * 生成 Cache key
  */
 export function genCacheKey(val: string | number) {
-    return Symbol(`Cache:${val}`) as unknown as string;
+    return `Cache:${val}` as const;
 }
 
 /**
@@ -52,4 +53,14 @@ export function getRoutePath(request: AdapterRequest) {
     const path =
         adapterName === 'FastifyApplication' ? request?.routeOptions?.url : request?.route?.path;
     return path || '';
+}
+
+/**
+ * 创建缓存器
+ */
+export function genCache() {
+    return caching('memory', {
+        max: 500,
+        ttl: 10 * 1000,
+    });
 }

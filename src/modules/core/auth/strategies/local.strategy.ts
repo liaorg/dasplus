@@ -4,7 +4,6 @@ import { ApiErrorInterface } from '@/common/interfaces';
 import { catchAwait, emptyCallback, sm4Decrypt, sm4Encrypt, user2requestUser } from '@/common/utils';
 import { LockerService } from '@/modules/admin/locker/locker.service';
 import { Locker } from '@/modules/admin/locker/schemas';
-import { IDocument } from '@/types';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
@@ -118,7 +117,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, AuthStrategy.LOCAL
 
     // 验证登录失败次数
     checkLeftTimes(param: {
-        lockerOld: IDocument<Locker>;
+        lockerOld: Locker;
         lockedTime: number;
         maxTimes: number;
         ip: string;

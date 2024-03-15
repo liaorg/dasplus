@@ -16,7 +16,7 @@ import { AdminRouteService } from '@/modules/core/admin-route/admin-route.servic
 import { AuthException } from '@/modules/core/auth/auth.exception';
 import { TokenService } from '@/modules/core/auth/services';
 import { RoleGroupTypeEnum } from '@/modules/core/role-group/enums';
-import { IDocument } from '@/types';
+import type { IDocument, WrapperType } from '@/types';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ClientSession, FilterQuery, QueryOptions } from 'mongoose';
 import { ExtractJwt } from 'passport-jwt';
@@ -32,7 +32,7 @@ export class UserService extends BaseService<User> {
     constructor(
         @InjectMongooseRepository(User.name) protected readonly repository: MongooseRepository<User>,
         // 有循环依赖时
-        @Inject(forwardRef(() => RoleService)) private readonly roleService: RoleService,
+        @Inject(forwardRef(() => RoleService)) private readonly roleService: WrapperType<RoleService>,
         private readonly adminRouteService: AdminRouteService,
         private readonly tokenService: TokenService,
     ) {

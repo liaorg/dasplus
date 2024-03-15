@@ -2,6 +2,7 @@ import { AdapterRequest } from '@/common/adapters';
 import { RequestUserDto } from '@/common/dto';
 import { genAuthTokenKey } from '@/common/helps';
 import { UserService } from '@/modules/admin/user/user.service';
+import type { WrapperType } from '@/types';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { Cache } from 'cache-manager';
@@ -14,7 +15,7 @@ export class AuthService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private tokenService: TokenService,
         // 有循环依赖时
-        @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
+        @Inject(forwardRef(() => UserService)) private readonly userService: WrapperType<UserService>,
     ) {}
 
     /**

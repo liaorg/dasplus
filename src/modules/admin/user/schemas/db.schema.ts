@@ -1,5 +1,5 @@
 import { CommonDescription } from '@/common/schemas';
-import { IRelation } from '@/types';
+import type { IRelation } from '@/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongoSchema, Types } from 'mongoose';
 import { Role } from '../../role/schemas';

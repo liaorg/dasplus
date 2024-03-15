@@ -29,7 +29,7 @@ import { SharedModule } from './shared/shared.module';
             load: [appConfig, mongodbConfig],
         }),
         // 缓存
-        CacheModule.register({ isGlobal: true }),
+        CacheModule.register({ isGlobal: true, max: 500 }),
         // 数据库连接
         DatabaseModule,
         // 国际化 i18n

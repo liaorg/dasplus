@@ -5,6 +5,7 @@ import { RequestUserDto } from '../dto';
 import { AnyObject, LogParam } from '../interfaces';
 import { hasChange, uniqArray } from './array';
 import { isArray, isEmpty, isObject } from './help';
+import { toObjectId } from './object-id';
 
 /**
  * 对象转换
@@ -69,6 +70,36 @@ export function filterUndefined(post: AnyObject) {
                 if (post.hasOwnProperty(key)) {
                     if (post[key] !== undefined) {
                         data[key] = post[key];
+                    }
+                    if (key === '_id') {
+                        data[key] = toObjectId(post[key]);
+                    }
+                }
+            }
+            return data;
+        }
+        return post;
+    } catch (error) {
+        return post;
+    }
+}
+
+/**
+ * 过滤对象中的 undefined，转换 objectid
+ * @param post
+ * @returns
+ */
+export function filterTransform(post: AnyObject) {
+    try {
+        if (!isEmpty(post)) {
+            const data = {};
+            for (const key in post) {
+                if (post.hasOwnProperty(key)) {
+                    if (post[key] !== undefined) {
+                        data[key] = post[key];
+                    }
+                    if (key === '_id') {
+                        data[key] = toObjectId(post[key]);
                     }
                 }
             }

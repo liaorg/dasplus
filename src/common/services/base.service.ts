@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cache, Milliseconds } from 'cache-manager';
 import { DeleteResult } from 'mongodb';
 import {
@@ -16,23 +16,38 @@ import {
 import { ApiErrorInterface, ObjectIdType } from '../interfaces';
 import { MongooseRepository } from '../repository';
 
+@Injectable()
 export abstract class BaseService<TM> {
     @Inject(CACHE_MANAGER) private cacheManager: Cache;
-    constructor(protected repository: MongooseRepository<TM>) {}
+    constructor(
+        protected repository: MongooseRepository<TM>,
+        protected cacheKey?: string,
+    ) {}
 
     // 获取模型
     getModel() {
         return this.repository.getModel();
     }
 
+    getCacheManager() {
+        return this.cacheManager;
+    }
+    // 初始化数据缓存
+    async initCache(ttl: Milliseconds = 0) {
+        this.find().then(async (data) => {
+            await this.setCache({ value: [...data], ttl });
+        });
+    }
+
     // 设置缓存
-    async setCache(key: string, value: any, ttl?: Milliseconds) {
+    async setCache(param: { value: any; key?: string; ttl?: Milliseconds }) {
+        const { key = this.cacheKey, value, ttl } = param;
         return await this.cacheManager.set(key, value, ttl);
     }
 
     // 获取缓存
-    async getCache<T = any>(key: string) {
-        return await this.cacheManager.get<T>(key);
+    async getCache(key: string = this.cacheKey) {
+        return (await this.cacheManager.get<TM[]>(key)) || [];
     }
 
     /**

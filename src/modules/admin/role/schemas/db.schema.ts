@@ -1,7 +1,7 @@
 import { CommonDescription } from '@/common/schemas';
 import { Permission } from '@/modules/core/permission/schemas';
 import { RoleGroup } from '@/modules/core/role-group/schemas';
-import { IRelation } from '@/types';
+import type { IRelation } from '@/types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { Tenant } from '../../tenant/schemas';

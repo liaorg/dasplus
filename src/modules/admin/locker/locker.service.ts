@@ -2,32 +2,24 @@ import { genCacheKey } from '@/common/helps';
 import { AnyObject } from '@/common/interfaces';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
-import { IDocument } from '@/types';
 import { Injectable } from '@nestjs/common';
 import { CreateLockerDto, UpdateLockerDto } from './dto';
 import { Locker, LockerDocument } from './schemas';
 
 @Injectable()
 export class LockerService extends BaseService<Locker> {
-    private cacheKey: string = genCacheKey('LockerService');
     constructor(
         @InjectMongooseRepository(Locker.name) protected readonly repository: MongooseRepository<Locker>,
     ) {
-        super(repository);
-        // 缓存配置
-        this.updateCache();
-    }
-
-    // 更新缓存配置
-    private async updateCache() {
-        this.find().then(async (data) => {
-            await this.setCache(this.cacheKey, [...data], 0);
-        });
+        const cacheKey: string = genCacheKey('LockerService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
     }
 
     // 获取缓存
     async getCacheDataByFilter(filter?: AnyObject) {
-        const data = (await this.getCache<IDocument<Locker>[]>(this.cacheKey)) || [];
+        const data = await this.getCache();
         if (filter) {
             return data.filter((item) => {
                 let has = false;
@@ -63,7 +55,7 @@ export class LockerService extends BaseService<Locker> {
         };
         const added = await this.insert({ doc: data });
         // 缓存配置
-        await this.updateCache();
+        await this.initCache();
         return added;
     }
 
@@ -83,7 +75,7 @@ export class LockerService extends BaseService<Locker> {
         const updated = await this.updateOne({ filter, doc: update });
         if (updated.acknowledged) {
             // 缓存配置
-            await this.updateCache();
+            await this.initCache();
             return true;
         }
         // 失败返回 false
@@ -101,7 +93,7 @@ export class LockerService extends BaseService<Locker> {
         const updated = await this.updateMany({ filter, doc: update });
         if (updated.acknowledged) {
             // 缓存配置
-            await this.updateCache();
+            await this.initCache();
             return true;
         }
         // 失败返回 false

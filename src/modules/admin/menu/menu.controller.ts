@@ -17,7 +17,7 @@ export class MenuController {
     // 设置不验证获取菜单的权限 /admin/menu
     @NotCheckMenuDecorator()
     @Get()
-    async findMenuTree(@RequestUserDecorator() loginUser: RequestUserDto): Promise<MenuRouteDto[]> {
+    async findMenuTree(@RequestUserDecorator() loginUser: RequestUserDto) {
         // 获取登录用户的角色
         const roleId = loginUser.roleId;
         // 获取菜单权限

@@ -298,7 +298,7 @@ export class RoleService extends BaseService<Role> {
     constructor(
         @InjectMongooseRepository(Role.name) protected readonly repository: MongooseRepository<Role>,
         // 有循环依赖时
-        @Inject(forwardRef(() => MenuService)) private readonly menuService: MenuService,
+        @Inject(forwardRef(() => MenuService)) private readonly menuService: WrapperType<MenuService>,
     ) {
         super(repository);
     }

@@ -1,3 +1,4 @@
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
 import { Injectable } from '@nestjs/common';
@@ -10,6 +11,9 @@ export class RoleGroupService extends BaseService<RoleGroup> {
         @InjectMongooseRepository(RoleGroup.name)
         protected readonly repository: MongooseRepository<RoleGroup>,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('RoleGroupService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
     }
 }
