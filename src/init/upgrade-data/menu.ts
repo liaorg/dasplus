@@ -14,7 +14,7 @@ import { ClientSession } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
 import { MenuInterface } from '../auth/consts';
 import { InitDBService } from '../common/init-db';
-import { menuData } from './consts';
+import { upgradeMenuData } from './consts';
 
 export const initLogger = new Logger('authdb', { timestamp: true });
 
@@ -144,7 +144,7 @@ async function updateMenu(
 }
 
 // 升级菜单
-export async function upgradeMenuData(dasService: InitDBService, i18n: I18nService) {
+export async function upgradeMenu(dasService: InitDBService, i18n: I18nService) {
     try {
         // 添加页面菜单权限
         const tablename = 'menus';
@@ -160,7 +160,7 @@ export async function upgradeMenuData(dasService: InitDBService, i18n: I18nServi
         const roleGroup = await service.roleGroup.find();
         // 添加菜单
         const updated = await service.menu.transaction(async (session) => {
-            const added = await updateMenu(service, roleGroup, menuData, session);
+            const added = await updateMenu(service, roleGroup, upgradeMenuData, session);
             if (!added) {
                 return false;
             }

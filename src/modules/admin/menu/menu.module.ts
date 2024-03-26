@@ -1,6 +1,6 @@
 import { MongooseRepositoryModule } from '@/common/repository';
-import { Module, forwardRef } from '@nestjs/common';
-import { RoleModule } from '../role/role.module';
+import { AuthModule } from '@/modules/core/auth/auth.module';
+import { Module } from '@nestjs/common';
 import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
 import { Menu, MenuSchema } from './schemas';
@@ -10,7 +10,7 @@ const providers = [MenuService];
 @Module({
     imports: [
         MongooseRepositoryModule.forFeature([{ name: Menu.name, schema: MenuSchema }]),
-        forwardRef(() => RoleModule),
+        AuthModule,
     ],
     controllers: [MenuController],
     providers: [...providers],

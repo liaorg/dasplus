@@ -19,9 +19,8 @@ export class MenuController {
     @Get()
     async findMenuTree(@RequestUserDecorator() loginUser: RequestUserDto) {
         // 获取登录用户的角色
-        const roleId = loginUser.roleId;
         // 获取菜单权限
-        const menu = await this.service.findMenuByRoleId(roleId, !!loginUser.isDefault);
+        const menu = await this.service.findMenuByRoleId(loginUser, !!loginUser.isDefault);
         // 生成菜单树
         return this.service.menuToTree(menu);
     }

@@ -9,8 +9,8 @@ export class MongooseRepositoryModule {
         return {
             module: MongooseRepositoryModule,
             imports: [MongooseModule.forFeature(models, connectionName)],
-            providers: repositoryProviders,
-            exports: repositoryProviders,
+            providers: [...repositoryProviders],
+            exports: [...repositoryProviders],
         };
     }
 }

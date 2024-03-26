@@ -1,4 +1,5 @@
 import { NetworkError } from '@/common/constants';
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService, ObjectIdType } from '@/common/services';
 import {
@@ -43,7 +44,10 @@ export class NetworkService extends BaseService<Network> {
         @InjectMongooseRepository(Network.name)
         protected readonly repository: MongooseRepository<Network>,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('NetworkService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
         // 如果是 docker 容器里
         // readFile('/run/systemd/container')
         //     .then((value) => {

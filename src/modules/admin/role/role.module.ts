@@ -16,7 +16,7 @@ const providers = [RoleService];
         MongooseRepositoryModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
         forwardRef(() => MenuModule),
         forwardRef(() => UserModule),
-        AuthModule,
+        forwardRef(() => AuthModule),
         RoleGroupModule,
         AdminRouteModule,
     ],

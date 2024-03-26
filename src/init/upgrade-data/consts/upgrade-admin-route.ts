@@ -4,7 +4,7 @@ import { RoleGroupTypeEnum } from '@/modules/core/role-group/enums';
 // roleGroup: [RoleGroupTypeEnum.systemAdmin],
 
 // 添加页面Route权限 admin_routes
-export const adminRouteData: AdminRouteInterface[] = [
+export const upgradeAdminRouteData: AdminRouteInterface[] = [
     // 报表任务
     {
         // 获取报表任务列表
@@ -126,5 +126,46 @@ export const adminRouteData: AdminRouteInterface[] = [
         menuPath: '/analysis/reports-view',
         method: 'POST',
         roleGroupType: [RoleGroupTypeEnum.securityAdmin],
+    },
+    // 租户管理
+    {
+        // 租户表格分页数据
+        path: '/tenant/query',
+        locale: 'route.page',
+        menuPath: '/system/tenant',
+        method: 'POST',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 添加租户
+        path: '/tenant',
+        locale: 'route.add',
+        menuPath: '/system/tenant',
+        method: 'POST',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 获取租户信息
+        path: '/tenant/:tenantId',
+        locale: 'route.info',
+        menuPath: '/system/tenant',
+        method: 'GET',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 修改租户
+        path: '/tenant/:tenantId',
+        locale: 'route.modify',
+        menuPath: '/system/tenant',
+        method: 'PATCH',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 删除租户，租户下的用户也会删除
+        path: '/tenant/:tenantId',
+        locale: 'route.del',
+        menuPath: '/system/tenant',
+        method: 'DELETE',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
     },
 ];

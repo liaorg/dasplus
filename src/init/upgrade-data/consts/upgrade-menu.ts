@@ -55,14 +55,24 @@ const strategyCenter: MenuInterface[] = [];
 // 部署管理
 const deployCenter: MenuInterface[] = [];
 // 系统管理
-const systemCenter: MenuInterface[] = [];
+const systemCenter: MenuInterface[] = [
+    {
+        parentPath: '/system',
+        menuUrl: '/system/tenant',
+        locale: 'menu.tenant',
+        menuName: '租户管理',
+        routeName: 'Tenant',
+        order: 52,
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+];
 // 系统配置
 const systemConfCenter: MenuInterface[] = [];
 // 日志管理
 const logCenter: MenuInterface[] = [];
 
 // 系统菜单
-export const menuData: MenuInterface[] = [
+export const upgradeMenuData: MenuInterface[] = [
     {
         // 监控中心
         menuUrl: '/monitor',

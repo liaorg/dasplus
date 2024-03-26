@@ -1,6 +1,7 @@
 import { AdapterRequest } from '@/common/adapters';
 import { AuthError, RoleError, UserError } from '@/common/constants';
 import { RequestUserDto } from '@/common/dto';
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService, ObjectIdType } from '@/common/services';
 import {
@@ -16,8 +17,10 @@ import { AdminRouteService } from '@/modules/core/admin-route/admin-route.servic
 import { AuthException } from '@/modules/core/auth/auth.exception';
 import { TokenService } from '@/modules/core/auth/services';
 import { RoleGroupTypeEnum } from '@/modules/core/role-group/enums';
+import { DATA_CACHE_MANAGER } from '@/shared/cache/data-cache.providers';
 import type { IDocument, WrapperType } from '@/types';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { ClientSession, FilterQuery, QueryOptions } from 'mongoose';
 import { ExtractJwt } from 'passport-jwt';
 import { RoleException } from '../role/role.exception';
@@ -35,8 +38,14 @@ export class UserService extends BaseService<User> {
         @Inject(forwardRef(() => RoleService)) private readonly roleService: WrapperType<RoleService>,
         private readonly adminRouteService: AdminRouteService,
         private readonly tokenService: TokenService,
+        @Inject(DATA_CACHE_MANAGER) private dataCacheManager: Cache,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('UserService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.find().then(async (data) => {
+            await this.dataCacheManager.set(this.cacheKey, [...data], 0);
+        });
     }
 
     /**
@@ -406,5 +415,13 @@ export class UserService extends BaseService<User> {
         }
         // 密码错误
         return undefined;
+    }
+
+    /**
+     * 获取用户角色权限
+     */
+    async getPermissions(roleId: ObjectIdType) {
+        const role = await this.roleService.findById(roleId);
+        return (role?.permissions as ObjectIdType[]) || [];
     }
 }

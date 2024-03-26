@@ -1,2 +1,2 @@
-export * from './admin-route';
-export * from './menu';
+export * from './upgrade-admin-route';
+export * from './upgrade-menu';

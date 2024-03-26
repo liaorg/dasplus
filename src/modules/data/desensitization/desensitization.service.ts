@@ -1,3 +1,4 @@
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
 import { coverContent, hasCreditCard, hasIdentityCode, replacePos } from '@/common/utils';
@@ -11,7 +12,10 @@ export class DesensitizationService extends BaseService<DesensitizationCfg> {
         @InjectMongooseRepository(DesensitizationCfg.name)
         protected readonly repository: MongooseRepository<DesensitizationCfg>,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('DesensitizationService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
     }
 
     // 获取脱敏配置

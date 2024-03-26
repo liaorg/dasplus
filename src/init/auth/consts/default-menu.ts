@@ -249,6 +249,15 @@ const systemCenter: MenuInterface[] = [
         order: 55,
         roleGroupType: [RoleGroupTypeEnum.systemAdmin],
     },
+    {
+        parentPath: '/system',
+        menuUrl: '/system/tenant',
+        locale: 'menu.tenant',
+        menuName: '租户管理',
+        routeName: 'Tenant',
+        order: 52,
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
 ];
 
 // 系统管理员-系统配置

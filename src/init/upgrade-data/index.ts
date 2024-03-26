@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { InitDBService } from '../common/init-db';
-import { upgradeMenuData } from './menu';
-import { upgradeAdminRouteData } from './admin-route';
+import { upgradeAdminRoute } from './admin-route';
+import { upgradeMenu } from './menu';
 // import { MongoDbService } from '@/common/services';
 
 export const initLogger = new Logger('authdb', { timestamp: true });
@@ -11,9 +11,9 @@ export const initLogger = new Logger('authdb', { timestamp: true });
 export async function upgradeAuthData(dasService: InitDBService, i18n: I18nService) {
     try {
         // 升级菜单
-        await upgradeMenuData(dasService, i18n);
+        await upgradeMenu(dasService, i18n);
         // 升级路由
-        await upgradeAdminRouteData(dasService, i18n);
+        await upgradeAdminRoute(dasService, i18n);
     } catch (error) {
         initLogger.error(i18n.t('init.upgeadeFailed', { args: { tablename: 'menus admin_routes' } }));
         throw error;

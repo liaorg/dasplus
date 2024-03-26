@@ -1,58 +1,34 @@
-import { genCache, genCacheKey } from '@/common/helps';
+import { RequestUserDto } from '@/common/dto';
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
-import { BaseService, ObjectIdType } from '@/common/services';
+import { BaseService } from '@/common/services';
 import { compareObjectId, includesObjectId } from '@/common/utils';
-import type { WrapperType } from '@/types';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { MemoryCache } from 'cache-manager';
-import { RoleService } from '../role/role.service';
+import { AuthService } from '@/modules/core/auth/auth.service';
+import { Injectable } from '@nestjs/common';
 import { ONLY_SYSTEM_ADMIN_MENU } from './constants';
 import { Menu } from './schemas';
 
 @Injectable()
 export class MenuService extends BaseService<Menu> {
-    private static memoryCache: MemoryCache;
     constructor(
         @InjectMongooseRepository(Menu.name) protected readonly repository: MongooseRepository<Menu>,
-        @Inject(forwardRef(() => RoleService)) private readonly roleService: WrapperType<RoleService>,
+        private readonly authService: AuthService,
     ) {
         const cacheKey: string = genCacheKey('MenuService');
         super(repository, cacheKey);
-        // 模块有相互依赖引用 forwardRef 时，要自建缓存
-        genCache().then((cache) => {
-            MenuService.memoryCache = cache;
-            this.find().then(async (data) => {
-                await MenuService.memoryCache.set(this.cacheKey, [...data], 0);
-            });
-        });
-    }
-
-    // 获取缓存
-    async getCacheData(key: string = this.cacheKey) {
-        return (await MenuService.memoryCache.get<Menu[]>(key)) || [];
+        // 缓存数据
+        this.initCache();
     }
 
     // 根据角色，获取菜单权限下拉列表
-    async findMenuByRoleId(roleId: ObjectIdType, isDefaultUser: boolean = false) {
-        // 先获取角色权限
-        const role = await this.roleService.findById(roleId);
-        const permissions = role?.permissions || [];
-        // 再获取角色菜单
-        // const param: any = {
-        //     filter: {
-        //         status: 1,
-        //         permission: { $in: permissions },
-        //     },
-        //     projection: '-permission',
-        // };
-        // if (isDefaultUser === false) {
-        //     // 如果不是默认管理员要排除用户管理和角色管理的权限
-        //     // /system/role /system/user
-        //     param.filter.menuUrl = { $nin: ONLY_SYSTEM_ADMIN_MENU };
-        // }
-        // const menu = await this.find(param);
+    async findMenuByRoleId(loginUser: RequestUserDto, isDefaultUser: boolean = false) {
         // 从缓存中获取
-        const data = await this.getCacheData();
+        const [permissions, data] = await Promise.all([
+            // 获取角色权限
+            this.authService.getPermissionsByLoginUser(loginUser),
+            // 获取角色菜单
+            this.getCache(),
+        ]);
         const menu = data.filter((item) => {
             let has = item.status === 1 && includesObjectId(permissions, item.permission);
             if (isDefaultUser === false) {

@@ -1,4 +1,5 @@
 import { AdminHostError } from '@/common/constants';
+import { genCacheKey } from '@/common/helps';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
 import { catchAwait, execSh, isEmpty, writeFile } from '@/common/utils';
@@ -23,7 +24,10 @@ export class AdminHostService extends BaseService<AdminHost> {
         private readonly systemConfigureService: SystemConfigureService,
         private configService: ConfigService,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('AdminHostService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
         // 如果是 docker 容器里
         // readFile('/run/systemd/container')
         //     .then((value) => {

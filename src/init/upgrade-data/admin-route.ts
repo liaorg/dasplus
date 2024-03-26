@@ -12,7 +12,7 @@ import { RoleGroup, RoleGroupSchema } from '@/modules/core/role-group/schemas';
 import { Logger } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { InitDBService } from '../common/init-db';
-import { adminRouteData } from './consts';
+import { upgradeAdminRouteData } from './consts';
 // import { includesObjectId } from '@/common/utils';
 
 export const initLogger = new Logger('authdb', { timestamp: true });
@@ -25,7 +25,7 @@ interface ServiceInterface {
 }
 
 // 升级 用户，角色组，角色，菜单，路由等
-export async function upgradeAdminRouteData(dasService: InitDBService, i18n: I18nService) {
+export async function upgradeAdminRoute(dasService: InitDBService, i18n: I18nService) {
     try {
         // 添加页面api权限
         const tablename = 'admin_routes';
@@ -42,8 +42,8 @@ export async function upgradeAdminRouteData(dasService: InitDBService, i18n: I18
         // 添加路由
         const updated = await service.adminRoute.transaction(async (session) => {
             try {
-                for (let i = 0; i < adminRouteData.length; i++) {
-                    const item = adminRouteData[i];
+                for (let i = 0; i < upgradeAdminRouteData.length; i++) {
+                    const item = upgradeAdminRouteData[i];
                     // 获取角色和角色组信息
                     let roleGroupTypeData: RoleGroup[];
                     if (item.roleGroupType === '*') {

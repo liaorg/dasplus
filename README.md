@@ -134,6 +134,7 @@ Nest is [MIT licensed](LICENSE).
 
 ```
 # server certificate verification failed. CAfile: none CRLfile: none
+export GIT_SSL_NO_VERIFY=true
 git config --global http.sslverify false
 git config --global https.sslverify false
 # 配置用户名密码
@@ -145,6 +146,23 @@ git config --global user.email useremail@163.com
 ```
 
 ## 提交规范
+
+.git/config 配置中加入:
+
+```
+[commit]
+template = C:\\work\\dasplus\\commit_message.txt
+```
+
+commit_message.txt 文件内容为
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
 
 git commit -m "<type>(<scope>): <subject>"
 
@@ -178,8 +196,8 @@ build, ci, perf
 如:
 git status
 git add .
-git commit -m "fix: 修复"
-git commit -m "feat: 修复"
+git commit -m "fix(xx): 修复xxx"
+git commit -m "feat(xx): 新增加xxx功能"
 git push
 
 ## i18n
@@ -299,8 +317,16 @@ export class RoleService extends BaseService<Role> {
         @InjectMongooseRepository(Role.name) protected readonly repository: MongooseRepository<Role>,
         // 有循环依赖时
         @Inject(forwardRef(() => MenuService)) private readonly menuService: WrapperType<MenuService>,
+        // 模块有相互依赖引用 forwardRef 时，缓存要用 dataCacheManager
+        // @Inject(DATA_CACHE_MANAGER) private dataCacheManager: Cache
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('RoleService');
+        super(repository, cacheKey);
+        // 模块有相互依赖引用 forwardRef 时，要用 dataCacheManager
+        // 缓存数据
+        this.find().then(async (data) => {
+            await this.dataCacheManager.set(this.cacheKey, [...data], 0);
+        });
     }
 }
 ```

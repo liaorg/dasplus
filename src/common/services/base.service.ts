@@ -46,8 +46,8 @@ export abstract class BaseService<TM> {
     }
 
     // 获取缓存
-    async getCache(key: string = this.cacheKey) {
-        return (await this.cacheManager.get<TM[]>(key)) || [];
+    async getCache<T = TM>(key: string = this.cacheKey) {
+        return (await this.cacheManager.get<T[]>(key)) || [];
     }
 
     /**

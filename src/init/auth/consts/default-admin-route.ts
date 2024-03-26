@@ -1,5 +1,4 @@
-import { RoleGroupTypeEnum } from "@/modules/core/role-group/enums";
-
+import { RoleGroupTypeEnum } from '@/modules/core/role-group/enums';
 
 // 页面Route接口
 export interface AdminRouteInterface {
@@ -234,6 +233,47 @@ const systemCenter: AdminRouteInterface[] = [
         locale: 'route.shutdown',
         menuPath: '/system/maintain',
         method: 'POST',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    // 租户管理
+    {
+        // 租户表格分页数据
+        path: '/tenant/query',
+        locale: 'route.page',
+        menuPath: '/system/tenant',
+        method: 'POST',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 添加租户
+        path: '/tenant',
+        locale: 'route.add',
+        menuPath: '/system/tenant',
+        method: 'POST',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 获取租户信息
+        path: '/tenant/:tenantId',
+        locale: 'route.info',
+        menuPath: '/system/tenant',
+        method: 'GET',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 修改租户
+        path: '/tenant/:tenantId',
+        locale: 'route.modify',
+        menuPath: '/system/tenant',
+        method: 'PATCH',
+        roleGroupType: [RoleGroupTypeEnum.systemAdmin],
+    },
+    {
+        // 删除租户，租户下的用户也会删除
+        path: '/tenant/:tenantId',
+        locale: 'route.del',
+        menuPath: '/system/tenant',
+        method: 'DELETE',
         roleGroupType: [RoleGroupTypeEnum.systemAdmin],
     },
 ];

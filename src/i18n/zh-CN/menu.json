@@ -28,6 +28,7 @@
     "systemCenter": "系统管理",
     "user": "用户管理",
     "role": "角色管理",
+    "tenant": "租户管理",
     "service": "系统服务",
     "maintain": "系统维护",
     "systemProfile": "系统信息",

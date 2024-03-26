@@ -1,3 +1,4 @@
+import { genCacheKey } from '@/common/helps';
 import { AnyObject } from '@/common/interfaces';
 import { InjectMongooseRepository, MongooseRepository } from '@/common/repository';
 import { BaseService } from '@/common/services';
@@ -27,7 +28,10 @@ export class TenantService extends BaseService<Tenant> {
         private readonly roleService: RoleService,
         private readonly userService: UserService,
     ) {
-        super(repository);
+        const cacheKey: string = genCacheKey('TenantService');
+        super(repository, cacheKey);
+        // 缓存数据
+        this.initCache();
     }
 
     // 添加租户
@@ -71,7 +75,13 @@ export class TenantService extends BaseService<Tenant> {
         // 事务操作，失败后回滚
         const addedTenant = await this.transaction(async (session) => {
             // 写入数据库
-            const [errAdded, added] = await catchAwait(this.insert({ doc, options: { session } }));
+            const [errAdded, added] = await catchAwait(
+                this.insert({
+                    doc,
+                    options: { session },
+                }),
+            );
+            console.log('roleErrAdded || !addedRole::: ', added._id, added);
             if (errAdded || !added) {
                 return false;
             }
@@ -104,7 +114,10 @@ export class TenantService extends BaseService<Tenant> {
                         };
                         // 写入数据库
                         const [roleErrAdded, addedRole] = await catchAwait(
-                            this.roleService.insert({ doc: roleDoc, options: { session } }),
+                            this.roleService.insert({
+                                doc: roleDoc,
+                                options: { session, rawResult: true },
+                            }),
                         );
                         if (roleErrAdded || !addedRole) {
                             return Promise.reject('error');
@@ -131,7 +144,10 @@ export class TenantService extends BaseService<Tenant> {
                         };
                         // 写入数据库
                         const [userErrAdded, addedUser] = await catchAwait(
-                            this.userService.insert({ doc: userDoc, options: { session } }),
+                            this.userService.insert({
+                                doc: userDoc,
+                                options: { session, rawResult: true },
+                            }),
                         );
                         if (userErrAdded || !addedUser) {
                             return Promise.reject('error');

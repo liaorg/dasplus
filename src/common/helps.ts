@@ -39,8 +39,8 @@ export function genAuthTokenKey(val: string | number) {
 /**
  * 生成 Cache key
  */
-export function genCacheKey(val: string | number) {
-    return `Cache:${val}` as const;
+export function genCacheKey(val: string | number, prefix = '') {
+    return prefix ? (`Cache:${prefix}:${String(val)}` as const) : (`Cache:${String(val)}` as const);
 }
 
 /**

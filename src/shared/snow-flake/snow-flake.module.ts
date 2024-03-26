@@ -1,9 +1,14 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { snowFlakeProviders } from './snow-flake.providers';
 
-@Global()
-@Module({
-    providers: [...snowFlakeProviders],
-    exports: [...snowFlakeProviders],
-})
-export class SnowFlakeModule {}
+@Module({})
+export class SnowFlakeModule {
+    static forRoot() {
+        return {
+            global: true,
+            module: SnowFlakeModule,
+            providers: [...snowFlakeProviders],
+            exports: [...snowFlakeProviders],
+        };
+    }
+}
